@@ -51,13 +51,6 @@ import { HeroSceneComponent } from './hero-scene.component';
           </a>
         </div>
 
-        <div appReveal mode="fade" [delay]="1.3" class="mt-10 flex items-center gap-2.5 text-sm text-muted">
-          <svg viewBox="0 0 24 24" class="size-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-          Supports awareness. A dermatologist confirms the diagnosis.
-        </div>
       </div>
 
       <!-- Scroll cue -->

@@ -84,7 +84,10 @@ export class ScreenTemplateDirective {
           <div class="flex justify-center">
             <!-- Silver iPhone frame -->
             <div class="relative w-[19rem] rounded-[3rem] border border-[#d2d2d7] bg-gradient-to-b from-[#f5f5f7] to-[#e8e8ed] p-2.5 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.06)]">
-              <div aria-hidden="true" class="absolute top-2.5 left-1/2 z-20 h-6 w-24 -translate-x-1/2 rounded-b-2xl bg-black"></div>
+              <!-- Dynamic Island: floating pill with a camera cutout on the right -->
+              <div aria-hidden="true" class="absolute top-[1.15rem] left-1/2 z-30 flex h-[1.65rem] w-[6.25rem] -translate-x-1/2 items-center justify-end rounded-full bg-black pr-2 shadow-[0_1px_3px_rgba(0,0,0,0.45)]">
+                <span class="size-2.5 rounded-full bg-[#0a0a0a] ring-1 ring-white/15"></span>
+              </div>
               <div class="relative aspect-[9/19] overflow-hidden rounded-[2.4rem] border border-black/5 bg-surface">
                 @for (step of steps; track step.title; let i = $index) {
                   <div

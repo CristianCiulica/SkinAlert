@@ -25,7 +25,7 @@ interface NavLink {
     >
       <nav
         class="mx-auto mt-4 flex max-w-6xl items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500 max-lg:mx-4"
-        [class]="scrolled() ? 'glass shadow-2xl shadow-black/40' : 'border border-transparent'"
+        [class]="scrolled() ? 'glass' : 'border border-transparent'"
         aria-label="Main navigation"
       >
         <a
@@ -35,7 +35,7 @@ interface NavLink {
           aria-label="SkinAlert home"
         >
           <span
-            class="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-black shadow-lg shadow-primary/30 transition-transform duration-500 group-hover:rotate-12"
+            class="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-white shadow-lg shadow-primary/25 transition-transform duration-500 group-hover:rotate-12"
           >
             <svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z" />
@@ -51,7 +51,7 @@ interface NavLink {
               <a
                 [href]="link.anchor"
                 (click)="go($event, link.anchor)"
-                class="rounded-lg px-3.5 py-2 text-sm text-gray-400 transition-colors duration-300 hover:bg-white/5 hover:text-white"
+                class="rounded-lg px-3.5 py-2 text-sm text-muted transition-colors duration-300 hover:bg-black/5 hover:text-ink"
               >
                 {{ link.label }}
               </a>
@@ -71,7 +71,7 @@ interface NavLink {
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-xl border border-white/10 lg:hidden"
+            class="grid size-10 place-items-center rounded-xl border border-line lg:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             aria-controls="mobile-menu"
@@ -96,7 +96,7 @@ interface NavLink {
                 <a
                   [href]="link.anchor"
                   (click)="go($event, link.anchor)"
-                  class="block rounded-lg px-4 py-3 text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+                  class="block rounded-lg px-4 py-3 text-sm text-ink/80 transition-colors hover:bg-black/5 hover:text-ink"
                 >
                   {{ link.label }}
                 </a>

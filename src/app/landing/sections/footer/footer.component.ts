@@ -12,19 +12,19 @@ interface FooterColumn {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SafeHtmlPipe],
   template: `
-    <footer id="contact" class="border-t border-white/6 bg-surface">
+    <footer id="contact" class="border-t border-line bg-surface">
       <div class="mx-auto max-w-7xl px-6 py-16">
         <div class="grid gap-12 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <a href="#top" (click)="go($event, '#top')" class="flex items-center gap-2.5 text-lg font-semibold tracking-tight" aria-label="SkinAlert home">
-              <span class="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-black">
+              <span class="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-white">
                 <svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.6"/>
                 </svg>
               </span>
               Skin<span class="text-primary">Alert</span>
             </a>
-            <p class="mt-5 max-w-xs text-sm leading-relaxed text-gray-500">
+            <p class="mt-5 max-w-xs text-sm leading-relaxed text-muted">
               Early Detection. Smarter Decisions. AI-assisted skin awareness that
               always points you to professional care.
             </p>
@@ -35,7 +35,7 @@ interface FooterColumn {
                   target="_blank"
                   rel="noopener noreferrer"
                   [attr.aria-label]="social.label"
-                  class="grid size-10 place-items-center rounded-xl border border-white/10 text-gray-400 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                  class="grid size-10 place-items-center rounded-xl border border-line text-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
                   [innerHTML]="social.icon | safeHtml"
                 ></a>
               }
@@ -51,7 +51,7 @@ interface FooterColumn {
                     <a
                       [href]="link.href"
                       (click)="link.href.startsWith('#') && link.href.length > 1 ? go($event, link.href) : null"
-                      class="text-sm text-gray-500 transition-colors duration-300 hover:text-primary"
+                      class="text-sm text-muted transition-colors duration-300 hover:text-primary"
                     >{{ link.label }}</a>
                   </li>
                 }
@@ -60,7 +60,7 @@ interface FooterColumn {
           }
         </div>
 
-        <div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/6 pt-8 text-xs text-gray-600 sm:flex-row">
+        <div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line pt-8 text-xs text-muted/80 sm:flex-row">
           <p>© {{ year }} SkinAlert. All rights reserved.</p>
           <p>Not a medical device. Always consult a qualified dermatologist.</p>
         </div>

@@ -45,7 +45,7 @@ interface FaqItem {
                 [style.gridTemplateRows]="open() === i ? '1fr' : '0fr'"
               >
                 <div class="overflow-hidden">
-                  <p class="px-6 pb-6 leading-relaxed text-gray-400">{{ item.answer }}</p>
+                  <p class="px-6 pb-6 leading-relaxed text-muted">{{ item.answer }}</p>
                 </div>
               </div>
             </div>

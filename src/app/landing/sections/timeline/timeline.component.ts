@@ -40,8 +40,8 @@ interface TimelineStep {
 
       <div #pinWrap class="relative mt-16">
         <!-- Progress rail -->
-        <div aria-hidden="true" class="absolute top-[4.4rem] right-0 left-0 hidden h-px bg-white/8 lg:block">
-          <div #progress class="h-full origin-left scale-x-0 bg-gradient-to-r from-primary to-secondary shadow-[0_0_12px_rgba(79,209,197,0.8)]"></div>
+        <div aria-hidden="true" class="absolute top-[4.4rem] right-0 left-0 hidden h-px bg-line lg:block">
+          <div #progress class="h-full origin-left scale-x-0 bg-gradient-to-r from-primary to-secondary shadow-[0_0_12px_rgba(0,122,255,0.35)]"></div>
         </div>
 
         <ol
@@ -57,10 +57,10 @@ interface TimelineStep {
             >
               <div class="mb-6 flex items-center gap-4">
                 <span class="grid size-12 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary" [innerHTML]="step.icon | safeHtml" aria-hidden="true"></span>
-                <span class="text-sm font-semibold tracking-[0.2em] text-gray-500">STEP {{ step.index }}</span>
+                <span class="text-sm font-semibold tracking-[0.2em] text-muted">STEP {{ step.index }}</span>
               </div>
               <h3 class="text-xl font-semibold">{{ step.title }}</h3>
-              <p class="mt-3 leading-relaxed text-gray-400">{{ step.description }}</p>
+              <p class="mt-3 leading-relaxed text-muted">{{ step.description }}</p>
               @if (i < steps.length - 1) {
                 <span aria-hidden="true" class="absolute top-1/2 -right-7 hidden -translate-y-1/2 text-primary/60 lg:block">
                   <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>

@@ -9,7 +9,7 @@ import { RippleDirective } from '../../../shared/directives/ripple.directive';
   template: `
     <section id="cta" class="section overflow-hidden" aria-labelledby="cta-heading">
       <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute bottom-0 left-1/2 h-[32rem] w-[70rem] -translate-x-1/2 translate-y-1/2 rounded-full bg-primary/12 blur-[140px]"></div>
+        <div class="absolute bottom-0 left-1/2 h-[32rem] w-[70rem] -translate-x-1/2 translate-y-1/2 rounded-full bg-primary/8 blur-[140px]"></div>
         <div class="absolute top-0 left-1/4 h-64 w-64 rounded-full bg-secondary/8 blur-[100px]"></div>
       </div>
 
@@ -17,7 +17,7 @@ import { RippleDirective } from '../../../shared/directives/ripple.directive';
         <h2 id="cta-heading" appReveal mode="words" [stagger]="0.07" class="text-balance text-5xl font-bold tracking-tight sm:text-6xl">
           Take Control of Your Skin Health.
         </h2>
-        <p appReveal mode="fade" [delay]="0.3" class="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-gray-400">
+        <p appReveal mode="fade" [delay]="0.3" class="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-muted">
           Checking a mole shouldn't take a month. Make responsible skin monitoring
           a five-second habit — and bring better information to your next
           dermatologist visit.
@@ -36,7 +36,7 @@ import { RippleDirective } from '../../../shared/directives/ripple.directive';
           </a>
         </div>
 
-        <p appReveal mode="fade" [delay]="0.7" class="mt-8 text-sm text-gray-600">
+        <p appReveal mode="fade" [delay]="0.7" class="mt-8 text-sm text-muted/80">
           Free to try · No account required · Your photos stay private
         </p>
       </div>

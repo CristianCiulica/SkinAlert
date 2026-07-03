@@ -3,7 +3,8 @@
 **Early Detection. Smarter Decisions.**
 
 Premium marketing site for SkinAlert, an AI-powered skin lesion analysis platform.
-Dark, cinematic, Apple-keynote-style scroll experience built with Angular.
+Clean, bright, Apple-inspired scroll experience built with Angular — white surfaces,
+SF-style typography, frosted-glass widgets, and Apple-blue accents.
 
 > SkinAlert supports early awareness. It does not diagnose cancer — always
 > consult a qualified dermatologist.
@@ -12,7 +13,7 @@ Dark, cinematic, Apple-keynote-style scroll experience built with Angular.
 
 - **Angular 20** — standalone components, signals, zone-coalesced change detection, `@defer`
 - **TailwindCSS 4** — design tokens via `@theme` in [src/styles.css](src/styles.css)
-- **Three.js** — custom "neural orb" hero scene (PBR glass shell, procedural neural lattice, RoomEnvironment lighting, UnrealBloom postprocessing)
+- **Three.js** — custom "neural orb" hero scene (translucent white glass shell, procedural blue neural lattice, pearl nucleus, RoomEnvironment keynote lighting; rendered directly — bloom postprocessing would composite a black backbuffer over the white page)
 - **GSAP + ScrollTrigger** — scroll choreography, pinned sections, counters, reveals
 - **Lenis** — smooth scrolling, driven by the GSAP ticker (single rAF loop)
 
@@ -66,8 +67,8 @@ src/app/
 
 | Section    | Behavior |
 |------------|----------|
-| Hero orb   | Camera pull-back, lattice spread, teal→blue light shift scrubbed over the first two viewports |
-| Navbar     | Glass blur after 24 px, hides scrolling down, returns scrolling up |
+| Hero orb   | Camera pull-back, lattice spread, warm-white→sky-blue light shift scrubbed over the first two viewports |
+| Navbar     | Frosted-white glass after 24 px, hides scrolling down, returns scrolling up |
 | Stats      | Counter tweens fire once on entry |
 | Timeline   | Pinned; vertical scroll scrubs the horizontal step track (desktop) |
 | Showcase   | Pinned phone; scroll progress selects one of seven app screens |

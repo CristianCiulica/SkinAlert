@@ -19,10 +19,10 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
           SkinAlert is an assistant, not a doctor.
         </h2>
 
-        <div appReveal mode="fade" [delay]="0.25" class="mx-auto mt-10 max-w-2xl space-y-6 text-lg leading-relaxed text-gray-400">
+        <div appReveal mode="fade" [delay]="0.25" class="mx-auto mt-10 max-w-2xl space-y-6 text-lg leading-relaxed text-muted">
           <p>
-            SkinAlert is an <strong class="font-semibold text-white">AI-powered assistant</strong>.
-            It <strong class="font-semibold text-white">does not diagnose cancer</strong> or any
+            SkinAlert is an <strong class="font-semibold text-ink">AI-powered assistant</strong>.
+            It <strong class="font-semibold text-ink">does not diagnose cancer</strong> or any
             other medical condition. It estimates risk based on image analysis and is intended
             solely to support early awareness.
           </p>
@@ -30,7 +30,7 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
             AI estimates can be wrong — in both directions. A low risk score never rules out
             disease, and a high score is not a diagnosis.
           </p>
-          <p class="rounded-2xl border border-white/10 bg-white/3 px-8 py-6 font-medium text-gray-200">
+          <p class="rounded-2xl border border-line bg-surface px-8 py-6 font-medium text-ink/80">
             Always consult a qualified dermatologist for medical diagnosis, and seek care
             promptly for any lesion that changes, bleeds, or concerns you — whatever this
             or any app says.

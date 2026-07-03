@@ -49,8 +49,8 @@ interface Stat {
                   >0</span
                 ><span class="text-primary">{{ stat.suffix }}</span>
               </p>
-              <p class="mt-3 text-sm font-semibold text-white">{{ stat.label }}</p>
-              <p class="mt-1 text-sm text-gray-500">{{ stat.detail }}</p>
+              <p class="mt-3 text-sm font-semibold text-ink">{{ stat.label }}</p>
+              <p class="mt-1 text-sm text-muted">{{ stat.detail }}</p>
             </div>
           }
         </div>

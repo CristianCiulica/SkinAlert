@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "SF Pro Display", sans-serif;
 
-  --color-base: #050505;
-  --color-surface: #0b0b0d;
-  --color-primary: #4fd1c5;
-  --color-secondary: #60a5fa;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  --color-base: #ffffff;
+  --color-surface: #f5f7fa;
+  --color-primary: #007aff;
+  --color-secondary: #5ac8fa;
+  --color-success: #34c759;
+  --color-warning: #ff9500;
+  --color-danger: #ff3b30;
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
+  --color-line: #e5e5ea;
 }
 
 html {
@@ -19,7 +22,7 @@ html {
 html,
 body {
   background-color: var(--color-base);
-  color: #fff;
+  color: var(--color-ink);
   font-family: var(--font-sans);
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
@@ -28,8 +31,8 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
-  color: #fff;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-ink);
 }
 
 /* Lenis recommended styles */
@@ -47,13 +50,17 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* ---------- Shared premium primitives ---------- */
+/* ---------- Apple-style primitives ---------- */
 
+/* Translucent widget card: frosted white, hairline border, soft shadow */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 12px 32px -16px rgba(0, 0, 0, 0.08);
 }
 
 .glass-hover {
@@ -64,64 +71,74 @@ html.lenis body {
     box-shadow 0.5s ease;
 }
 .glass-hover:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.92);
   transform: translateY(-4px);
   box-shadow:
-    0 24px 48px -24px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(79, 209, 197, 0.06);
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 28px 56px -24px rgba(0, 0, 0, 0.14);
+}
+
+/* Solid white "widget" card for content that shouldn't be translucent */
+.card {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 12px 32px -16px rgba(0, 0, 0, 0.08);
 }
 
 .text-gradient {
-  background: linear-gradient(120deg, #fff 30%, var(--color-primary) 65%, var(--color-secondary) 100%);
+  background: linear-gradient(110deg, var(--color-primary) 15%, var(--color-secondary) 85%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
+/* Kept for template compatibility — glow is not part of the light language */
 .text-glow {
-  text-shadow: 0 0 48px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  text-shadow: none;
 }
 
-/* CTA button with glow + ripple */
+/* Primary: Apple blue, soft shadow, gentle hover darken + scale */
 .btn-primary {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(135deg, var(--color-primary), #38b2ac);
-  color: #03302c;
+  background: var(--color-primary);
+  color: #fff;
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s ease,
     box-shadow 0.35s ease;
-  box-shadow:
-    0 0 0 1px rgba(79, 209, 197, 0.4),
-    0 8px 32px -8px rgba(79, 209, 197, 0.45);
+  box-shadow: 0 8px 24px -8px rgba(0, 122, 255, 0.45);
 }
 .btn-primary:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 0 0 1px rgba(79, 209, 197, 0.7),
-    0 16px 48px -8px rgba(79, 209, 197, 0.55);
+  background: #0071e3;
+  transform: translateY(-1px) scale(1.015);
+  box-shadow: 0 12px 32px -8px rgba(0, 122, 255, 0.5);
 }
 .btn-primary:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.985);
 }
 
+/* Secondary: white, hairline gray border */
 .btn-ghost {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.03);
+  background: #fff;
+  border: 1px solid #d2d2d7;
+  color: var(--color-ink);
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.35s ease,
     background-color 0.35s ease;
 }
 .btn-ghost:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  border-color: #b8b8bf;
+  background: #f5f5f7;
 }
 
 .ripple {
@@ -129,9 +146,12 @@ html.lenis body {
   border-radius: 9999px;
   transform: scale(0);
   animation: ripple 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.4);
   pointer-events: none;
   z-index: -1;
+}
+.btn-ghost .ripple {
+  background: rgba(0, 0, 0, 0.06);
 }
 @keyframes ripple {
   to {
@@ -140,10 +160,10 @@ html.lenis body {
   }
 }
 
-/* Section shell */
+/* Section shell — generous, Apple-like breathing room */
 .section {
   position: relative;
-  padding-block: clamp(6rem, 12vw, 10rem);
+  padding-block: clamp(7rem, 14vw, 12rem);
 }
 
 .section-label {
@@ -177,12 +197,12 @@ html.lenis body {
   background: var(--color-base);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: #d2d2d7;
   border-radius: 8px;
   border: 2px solid var(--color-base);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(79, 209, 197, 0.4);
+  background: #b8b8bf;
 }
 
 @media (prefers-reduced-motion: reduce) {

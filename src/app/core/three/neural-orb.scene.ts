@@ -1,8 +1,4 @@
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 export interface NeuralOrbOptions {
@@ -11,9 +7,14 @@ export interface NeuralOrbOptions {
 }
 
 /**
- * SkinAlert hero object: a physically-based glass orb enclosing a
- * procedurally generated neural lattice — nodes on a fibonacci sphere,
- * connected by proximity, pulsing softly like signal activity.
+ * SkinAlert hero object, Apple-keynote edition: a translucent white
+ * glass sphere enclosing a delicate blue neural lattice — nodes on a
+ * fibonacci sphere, connected by proximity, breathing softly.
+ *
+ * Rendered directly (no bloom pass): postprocessing composites over a
+ * black backbuffer, which would break the transparent canvas on a
+ * white page. The soft studio look comes from the PMREM environment
+ * and gentle key/fill lights instead.
  *
  * Deliberately framework-agnostic: the Angular component owns the
  * lifecycle and feeds it pointer/scroll/resize input.
@@ -22,8 +23,6 @@ export class NeuralOrbScene {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene = new THREE.Scene();
   private readonly camera: THREE.PerspectiveCamera;
-  private readonly composer: EffectComposer;
-  private readonly bloom: UnrealBloomPass;
   private readonly clock = new THREE.Clock();
 
   private readonly group = new THREE.Group();
@@ -31,8 +30,8 @@ export class NeuralOrbScene {
   private readonly nodes: THREE.Points;
   private readonly links: THREE.LineSegments;
   private readonly core: THREE.Mesh;
-  private readonly keyLight: THREE.PointLight;
-  private readonly rimLight: THREE.PointLight;
+  private readonly keyLight: THREE.DirectionalLight;
+  private readonly fillLight: THREE.DirectionalLight;
 
   private readonly nodePositions: Float32Array;
   private readonly nodePhases: Float32Array;
@@ -60,39 +59,38 @@ export class NeuralOrbScene {
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.toneMappingExposure = 1.1;
 
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
     this.camera.position.set(0, 0, 9);
 
-    // HDR-quality studio environment without shipping an HDRI file.
+    // Soft studio reflections without shipping an HDRI file.
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.pmremEnv = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.scene.environment = this.pmremEnv;
     pmrem.dispose();
 
-    // --- Lights (env does most of the work; these add color intent) ---
-    this.keyLight = new THREE.PointLight(0x4fd1c5, 30, 30);
-    this.keyLight.position.set(4, 3, 5);
-    this.rimLight = new THREE.PointLight(0x60a5fa, 22, 30);
-    this.rimLight.position.set(-5, -2, -4);
-    this.scene.add(this.keyLight, this.rimLight, new THREE.AmbientLight(0x0b0b0d, 2));
+    // --- Keynote lighting: white key from above, cool fill, airy ambient ---
+    this.keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    this.keyLight.position.set(3, 5, 4);
+    this.fillLight = new THREE.DirectionalLight(0xbfe3ff, 1.1);
+    this.fillLight.position.set(-4, -2, 3);
+    this.scene.add(this.keyLight, this.fillLight, new THREE.AmbientLight(0xffffff, 0.6));
 
-    // --- Glass shell: thin transparent bubble so the lattice stays visible.
-    // (True transmission scatters the bright env into an opaque milky ball.)
+    // --- Translucent white glass shell ---
     this.shell = new THREE.Mesh(
       new THREE.SphereGeometry(2, 96, 96),
       new THREE.MeshPhysicalMaterial({
         transparent: true,
-        opacity: 0.1,
-        roughness: 0.05,
+        opacity: 0.22,
+        roughness: 0.12,
         metalness: 0,
         clearcoat: 1,
-        clearcoatRoughness: 0.1,
-        envMapIntensity: 0.9,
-        iridescence: 0.35,
-        iridescenceIOR: 1.3,
-        color: 0x9ff5ec,
+        clearcoatRoughness: 0.18,
+        envMapIntensity: 1.1,
+        iridescence: 0.08,
+        iridescenceIOR: 1.2,
+        color: 0xf4f9ff,
         depthWrite: false,
       }),
     );
@@ -115,16 +113,17 @@ export class NeuralOrbScene {
       this.nodePhases[i] = Math.random() * Math.PI * 2;
     }
 
+    // Additive blending washes out over a white page — use normal
+    // blending with saturated Apple blues so the lattice reads crisply.
     const nodeGeo = new THREE.BufferGeometry();
     nodeGeo.setAttribute('position', new THREE.BufferAttribute(this.nodePositions.slice(), 3));
     this.nodes = new THREE.Points(
       nodeGeo,
       new THREE.PointsMaterial({
-        color: 0x9ff5ec,
-        size: 0.045,
+        color: 0x007aff,
+        size: 0.05,
         transparent: true,
-        opacity: 0.95,
-        blending: THREE.AdditiveBlending,
+        opacity: 0.85,
         depthWrite: false,
         sizeAttenuation: true,
       }),
@@ -155,36 +154,31 @@ export class NeuralOrbScene {
     this.links = new THREE.LineSegments(
       linkGeo,
       new THREE.LineBasicMaterial({
-        color: 0x4fd1c5,
+        color: 0x5ac8fa,
         transparent: true,
-        opacity: 0.22,
-        blending: THREE.AdditiveBlending,
+        opacity: 0.4,
         depthWrite: false,
       }),
     );
     this.group.add(this.links);
 
-    // --- Glowing nucleus ---
+    // --- Pearl nucleus: white ceramic with the faintest cool sheen ---
     this.core = new THREE.Mesh(
       new THREE.IcosahedronGeometry(0.42, 3),
-      new THREE.MeshStandardMaterial({
-        color: 0x4fd1c5,
-        emissive: 0x2dd4bf,
-        emissiveIntensity: 1.5,
-        roughness: 0.3,
-        metalness: 0.1,
+      new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        roughness: 0.18,
+        metalness: 0.05,
+        clearcoat: 1,
+        clearcoatRoughness: 0.2,
+        envMapIntensity: 1.2,
+        emissive: 0xcfe8ff,
+        emissiveIntensity: 0.25,
       }),
     );
     this.group.add(this.core);
 
     this.scene.add(this.group);
-
-    // --- Postprocessing: render + bloom + output ---
-    this.composer = new EffectComposer(this.renderer);
-    this.composer.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.8, 0.88);
-    this.composer.addPass(this.bloom);
-    this.composer.addPass(new OutputPass());
 
     this.resize();
     this.frameId = requestAnimationFrame(this.loop);
@@ -202,7 +196,6 @@ export class NeuralOrbScene {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h, false);
-    this.composer.setSize(w, h);
   }
 
   private loop = (): void => {
@@ -216,47 +209,46 @@ export class NeuralOrbScene {
     this.pointerEased.lerp(this.pointer, 0.045);
 
     if (!this.opts.reducedMotion) {
-      this.group.rotation.y = t * 0.12 + p * Math.PI * 1.2;
-      this.group.rotation.x = Math.sin(t * 0.08) * 0.08 + p * 0.5;
+      this.group.rotation.y = t * 0.1 + p * Math.PI * 0.9;
+      this.group.rotation.x = Math.sin(t * 0.08) * 0.06 + p * 0.35;
 
       // Node pulse — subtle radial breathing per node.
       const posAttr = this.nodes.geometry.getAttribute('position') as THREE.BufferAttribute;
       const arr = posAttr.array as Float32Array;
       for (let i = 0; i < this.nodePhases.length; i++) {
-        const s = 1 + Math.sin(t * 1.4 + this.nodePhases[i]) * 0.035;
+        const s = 1 + Math.sin(t * 1.2 + this.nodePhases[i]) * 0.03;
         arr[i * 3] = this.nodePositions[i * 3] * s;
         arr[i * 3 + 1] = this.nodePositions[i * 3 + 1] * s;
         arr[i * 3 + 2] = this.nodePositions[i * 3 + 2] * s;
       }
       posAttr.needsUpdate = true;
 
-      const coreMat = this.core.material as THREE.MeshStandardMaterial;
-      coreMat.emissiveIntensity = 1.4 + Math.sin(t * 1.8) * 0.35;
-      this.core.rotation.y = -t * 0.25;
+      const coreMat = this.core.material as THREE.MeshPhysicalMaterial;
+      coreMat.emissiveIntensity = 0.22 + Math.sin(t * 1.6) * 0.08;
+      this.core.rotation.y = -t * 0.2;
     }
 
     // Mouse parallax on camera, always gentle.
-    this.camera.position.x += (this.pointerEased.x * 0.7 - this.camera.position.x) * 0.06;
-    this.camera.position.y += (-this.pointerEased.y * 0.45 - this.camera.position.y) * 0.06;
+    this.camera.position.x += (this.pointerEased.x * 0.55 - this.camera.position.x) * 0.06;
+    this.camera.position.y += (-this.pointerEased.y * 0.35 - this.camera.position.y) * 0.06;
 
     // Scroll choreography: camera pulls back & drifts, lattice opens,
-    // lighting shifts from teal toward clinical blue.
-    this.camera.position.z = 9 + p * 2.2;
-    this.camera.lookAt(0, p * -0.6, 0);
+    // light cools from warm white toward a soft sky blue.
+    this.camera.position.z = 9 + p * 2;
+    this.camera.lookAt(0, p * -0.5, 0);
 
-    const spread = 1 + p * 0.35;
+    const spread = 1 + p * 0.3;
     this.nodes.scale.setScalar(spread);
     this.links.scale.setScalar(spread);
-    (this.links.material as THREE.LineBasicMaterial).opacity = 0.22 * (1 - p * 0.5);
+    (this.links.material as THREE.LineBasicMaterial).opacity = 0.4 * (1 - p * 0.45);
 
     this.keyLight.color.lerpColors(
-      new THREE.Color(0x4fd1c5),
-      new THREE.Color(0x60a5fa),
+      new THREE.Color(0xffffff),
+      new THREE.Color(0xdcefff),
       p,
     );
-    this.bloom.strength = 0.55 + p * 0.25;
 
-    this.composer.render();
+    this.renderer.render(this.scene, this.camera);
   };
 
   dispose(): void {
@@ -270,7 +262,6 @@ export class NeuralOrbScene {
       }
     });
     this.pmremEnv.dispose();
-    this.composer.dispose();
     this.renderer.dispose();
   }
 }

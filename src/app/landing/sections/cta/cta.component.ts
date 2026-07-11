@@ -25,7 +25,7 @@ import { RippleDirective } from '../../../shared/directives/ripple.directive';
 
         <div appReveal mode="scale" [delay]="0.5" class="mt-12">
           <a
-            href="#top"
+            href="#analyzer"
             appRipple
             class="btn-primary group relative inline-flex items-center gap-3 rounded-2xl px-12 py-5 text-lg font-semibold"
           >

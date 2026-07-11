@@ -12,6 +12,7 @@ import { TestimonialsComponent } from './sections/testimonials/testimonials.comp
 import { DisclaimerComponent } from './sections/disclaimer/disclaimer.component';
 import { FaqComponent } from './sections/faq/faq.component';
 import { CtaComponent } from './sections/cta/cta.component';
+import { AnalyzerComponent } from './sections/analyzer/analyzer.component';
 import { FooterComponent } from './sections/footer/footer.component';
 
 @Component({
@@ -30,6 +31,7 @@ import { FooterComponent } from './sections/footer/footer.component';
     DisclaimerComponent,
     FaqComponent,
     CtaComponent,
+    AnalyzerComponent,
     FooterComponent,
   ],
   template: `
@@ -44,6 +46,7 @@ import { FooterComponent } from './sections/footer/footer.component';
 
     <main id="main">
       <app-hero />
+      <app-analyzer />
       <app-stats />
       <app-timeline />
       <app-technology />

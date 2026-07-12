@@ -7,56 +7,31 @@ import { HeroSceneComponent } from './hero-scene.component';
 @Component({
   selector: 'app-hero',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective, RippleDirective, HeroSceneComponent],
+  imports: [RevealDirective, RippleDirective],
   template: `
-    <section id="top" class="relative flex min-h-svh flex-col items-center overflow-hidden">
-      <!-- Airy ambient washes, barely there -->
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div class="absolute -top-48 left-1/2 h-[36rem] w-[64rem] -translate-x-1/2 rounded-full bg-secondary/10 blur-[160px]"></div>
-        <div class="absolute bottom-0 left-1/2 h-[28rem] w-[50rem] -translate-x-1/2 translate-y-1/3 rounded-full bg-primary/6 blur-[140px]"></div>
+    <section id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh">
+      <!-- Ambient light overlays -->
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0 mix-blend-overlay">
+        <div class="absolute -top-40 left-1/2 h-[50rem] w-[80rem] -translate-x-1/2 rounded-full bg-white/40 blur-[100px]"></div>
       </div>
 
-      <!-- 3D scene sits beneath the copy, like a product on a stage -->
-      @defer (on idle) {
-        <div class="absolute inset-x-0 top-[38%] bottom-0 opacity-90" aria-hidden="true">
-          <app-hero-scene />
-          <!-- Soft fade so the object melts into the page -->
-          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-base to-transparent"></div>
-        </div>
-      }
+      <div class="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
+        <p appReveal mode="fade" class="section-label mb-6 text-black/50">O nouă eră a analizei dermatologice</p>
 
-      <div class="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-6 pt-44 pb-[42vh] text-center sm:pt-52">
-        <p appReveal mode="fade" class="section-label mb-8">AI-Powered Skin Health</p>
-
-        <h1 class="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl">
-          <span appReveal mode="words" [stagger]="0.07" class="block">Early Detection.</span>
-          <!-- Whole-line reveal: word-splitting would break background-clip:text -->
-          <span appReveal mode="blur" [delay]="0.45" class="text-gradient block">
-            Powered by AI.
+        <h1 class="text-balance text-[4.5rem] font-bold leading-[1.02] tracking-tighter sm:text-[6.5rem] lg:text-[8.5rem] text-black drop-shadow-sm">
+          <span appReveal mode="words" [stagger]="0.07" class="block">Descoperă</span>
+          <span appReveal mode="blur" [delay]="0.45" class="block text-gradient">
+            ce îți spune pielea.
           </span>
         </h1>
 
-        <p appReveal mode="fade" [delay]="0.9" class="mt-8 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">
-          SkinAlert helps analyze skin lesion images with advanced artificial
-          intelligence to support early awareness and encourage professional
-          dermatological evaluation.
-        </p>
-
-        <div appReveal mode="fade" [delay]="1.1" class="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <a href="#cta" (click)="go($event, '#cta')" appRipple class="btn-primary rounded-full px-8 py-4 text-base font-semibold">
-            Start Analysis
+        <div appReveal mode="fade" [delay]="0.9" class="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
+          <a href="#analyzer" (click)="go($event, '#analyzer')" appRipple class="btn-primary px-12 py-5 text-xl backdrop-blur-md">
+            Analizează Acum
           </a>
-          <a href="#how-it-works" (click)="go($event, '#how-it-works')" appRipple class="btn-ghost rounded-full px-8 py-4 text-base font-medium">
-            Learn More
+          <a href="#how-it-works" (click)="go($event, '#how-it-works')" appRipple class="btn-ghost px-10 py-5 text-xl font-medium text-black">
+            Află Mai Multe
           </a>
-        </div>
-
-      </div>
-
-      <!-- Scroll cue -->
-      <div aria-hidden="true" class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
-        <div class="flex h-10 w-6 items-start justify-center rounded-full border border-line bg-white/60 p-1.5 backdrop-blur">
-          <div class="size-1.5 animate-bounce rounded-full bg-primary"></div>
         </div>
       </div>
     </section>

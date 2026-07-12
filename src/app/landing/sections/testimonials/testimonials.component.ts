@@ -24,11 +24,11 @@ interface Testimonial {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RevealDirective, TiltDirective],
   template: `
-    <section class="section" aria-labelledby="testimonials-heading">
+    <section class="section bg-white" aria-labelledby="testimonials-heading">
       <div class="mx-auto max-w-7xl px-6">
-        <p appReveal mode="fade" class="section-label">Trusted voices</p>
-        <h2 id="testimonials-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-          What people say about SkinAlert.
+        <p appReveal mode="fade" class="section-label">Voci de încredere</p>
+        <h2 id="testimonials-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 max-w-2xl text-4xl font-bold tracking-tighter text-black sm:text-5xl">
+          Ce spun experții și utilizatorii despre SkinAlert.
         </h2>
 
         <div class="mt-16 grid gap-6 md:grid-cols-3">
@@ -39,18 +39,18 @@ interface Testimonial {
               [delay]="i * 0.15"
               appTilt
               [strength]="4"
-              class="float-card glass glass-hover flex flex-col rounded-3xl p-8"
+              class="float-card card flex flex-col rounded-3xl p-8"
               [style.animationDelay]="i * 1.3 + 's'"
             >
-              <svg viewBox="0 0 24 24" class="size-8 text-primary/40" fill="currentColor" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="size-8 text-black/10" fill="currentColor" aria-hidden="true">
                 <path d="M10 8v6a4 4 0 0 1-4 4H5a1 1 0 0 1 0-2h1a2 2 0 0 0 2-2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2zm11 0v6a4 4 0 0 1-4 4h-1a1 1 0 0 1 0-2h1a2 2 0 0 0 2-2h-3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2z"/>
               </svg>
-              <blockquote class="mt-5 flex-1 leading-relaxed text-ink/80">{{ t.quote }}</blockquote>
-              <figcaption class="mt-8 flex items-center gap-4 border-t border-line pt-6">
-                <span class="grid size-11 place-items-center rounded-full bg-gradient-to-br from-primary to-secondary text-sm font-bold text-white">{{ t.initials }}</span>
+              <blockquote class="mt-5 flex-1 font-medium leading-relaxed text-black/80">{{ t.quote }}</blockquote>
+              <figcaption class="mt-8 flex items-center gap-4 border-t border-black/5 pt-6">
+                <span class="grid size-11 place-items-center rounded-full bg-gradient-to-br from-black to-gray-700 text-sm font-bold text-white shadow-md">{{ t.initials }}</span>
                 <div>
-                  <p class="text-sm font-semibold">{{ t.name }}</p>
-                  <p class="text-xs text-muted">{{ t.role }}</p>
+                  <p class="text-sm font-bold text-black">{{ t.name }}</p>
+                  <p class="text-xs font-medium text-black/50">{{ t.role }}</p>
                 </div>
               </figcaption>
             </figure>
@@ -68,21 +68,21 @@ export class TestimonialsComponent implements AfterViewInit, OnDestroy {
 
   readonly testimonials: Testimonial[] = [
     {
-      quote: 'I noticed a mole changing and SkinAlert flagged it as worth checking. My dermatologist confirmed it needed removal. That five-second scan genuinely mattered.',
+      quote: 'Am observat o aluniță care își schimba forma, iar SkinAlert mi-a recomandat să o verific. Medicul meu dermatolog a confirmat necesitatea eliminării ei. Acea scanare de cinci secunde a contat enorm.',
       name: 'Maya R.',
-      role: 'Early user, Barcelona',
+      role: 'Utilizator, București',
       initials: 'MR',
     },
     {
-      quote: 'As a GP, I appreciate that SkinAlert is honest about what it is: a triage aid that pushes people toward professional care instead of away from it.',
+      quote: 'Ca medic, apreciez onestitatea aplicației: este un instrument excelent de triaj care îndrumă pacienții spre îngrijire profesională din timp, fără a oferi verdicte finale false.',
       name: 'Dr. Andrei Popescu',
-      role: 'General Practitioner',
+      role: 'Medic Dermatolog',
       initials: 'AP',
     },
     {
-      quote: 'The heatmaps are what sold me. You can actually see why the model is concerned, instead of trusting a mystery number.',
+      quote: 'Hărțile termice sunt extraordinare. Poți vedea exact de ce inteligența artificială consideră o zonă suspectă, în loc să ai încredere oarbă într-un număr.',
       name: 'Jonas K.',
-      role: 'ML Engineer & melanoma survivor',
+      role: 'Inginer ML',
       initials: 'JK',
     },
   ];

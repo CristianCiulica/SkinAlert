@@ -25,32 +25,28 @@ interface Stat {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RevealDirective],
   template: `
-    <section class="section" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="sr-only">SkinAlert in numbers</h2>
+    <section class="section bg-surface" aria-labelledby="stats-heading">
+      <h2 id="stats-heading" class="sr-only">Performanță absolută.</h2>
       <div class="mx-auto max-w-7xl px-6">
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           @for (stat of stats; track stat.label; let i = $index) {
             <div
               appReveal
               mode="scale"
               [delay]="i * 0.12"
-              class="glass glass-hover stat-card group relative overflow-hidden rounded-3xl p-8"
+              class="card group relative overflow-hidden rounded-[2rem] p-8 text-center flex flex-col items-center justify-center transition-transform hover:scale-[1.02]"
             >
-              <div
-                aria-hidden="true"
-                class="absolute -top-12 -right-12 size-32 rounded-full bg-primary/10 blur-2xl transition-opacity duration-700 opacity-0 group-hover:opacity-100"
-              ></div>
-              <p class="text-5xl font-bold tracking-tight tabular-nums">
-                <span>{{ stat.prefix }}</span
+              <p class="text-[4rem] font-bold tracking-tighter tabular-nums leading-none">
+                <span class="text-black/50">{{ stat.prefix }}</span
                 ><span
-                  class="counter text-gradient"
+                  class="counter text-gradient-titanium"
                   [attr.data-target]="stat.value"
                   [attr.data-decimals]="stat.decimals"
                   >0</span
-                ><span class="text-primary">{{ stat.suffix }}</span>
+                ><span class="text-gradient-titanium">{{ stat.suffix }}</span>
               </p>
-              <p class="mt-3 text-sm font-semibold text-ink">{{ stat.label }}</p>
-              <p class="mt-1 text-sm text-muted">{{ stat.detail }}</p>
+              <p class="mt-4 text-lg font-bold text-black">{{ stat.label }}</p>
+              <p class="mt-1 text-sm text-black/60">{{ stat.detail }}</p>
             </div>
           }
         </div>
@@ -65,10 +61,10 @@ export class StatsComponent implements AfterViewInit, OnDestroy {
   private triggers: ScrollTrigger[] = [];
 
   readonly stats: Stat[] = [
-    { value: 98, prefix: '', suffix: '%', decimals: 0, label: 'AI Accuracy', detail: 'On benchmark dermatology datasets' },
-    { value: 500, prefix: '', suffix: 'K+', decimals: 0, label: 'Images Processed', detail: 'Analyzed securely in the cloud' },
-    { value: 24, prefix: '', suffix: '/7', decimals: 0, label: 'Availability', detail: 'Anytime, on any device' },
-    { value: 5, prefix: '<', suffix: ' sec', decimals: 0, label: 'Average Analysis Time', detail: 'From upload to risk estimate' },
+    { value: 98, prefix: '', suffix: '%', decimals: 0, label: 'Acuratețe AI', detail: '' },
+    { value: 500, prefix: '', suffix: 'K+', decimals: 0, label: 'Analize Efectuate', detail: '' },
+    { value: 24, prefix: '', suffix: '/7', decimals: 0, label: 'Disponibilitate', detail: '' },
+    { value: 5, prefix: '<', suffix: 's', decimals: 0, label: 'Timp de Răspuns', detail: '' },
   ];
 
   ngAfterViewInit(): void {

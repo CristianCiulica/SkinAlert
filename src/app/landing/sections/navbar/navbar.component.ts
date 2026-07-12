@@ -19,39 +19,30 @@ interface NavLink {
   imports: [RippleDirective],
   template: `
     <header
-      class="fixed inset-x-0 top-0 z-50 transition-all duration-500 will-change-transform"
-      [class.-translate-y-full]="hidden()"
+      class="fixed inset-x-0 top-6 z-50 flex justify-center transition-all duration-500 will-change-transform"
+      [class.-translate-y-24]="hidden()"
       [class.translate-y-0]="!hidden()"
     >
       <nav
-        class="mx-auto mt-4 flex max-w-6xl items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500 max-lg:mx-4"
-        [class]="scrolled() ? 'glass' : 'border border-transparent'"
+        class="glass flex items-center justify-between gap-8 rounded-full px-6 py-3 transition-all duration-500"
         aria-label="Main navigation"
       >
         <a
           href="#top"
           (click)="go($event, '#top')"
-          class="group flex items-center gap-2.5 text-[1.05rem] font-semibold tracking-tight"
+          class="group flex items-center gap-2 pl-2 text-xl font-bold tracking-tight text-black"
           aria-label="SkinAlert home"
         >
-          <span
-            class="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-primary to-secondary text-white shadow-lg shadow-primary/25 transition-transform duration-500 group-hover:rotate-12"
-          >
-            <svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z" />
-              <circle cx="12" cy="11" r="2.6" />
-            </svg>
-          </span>
-          Skin<span class="text-primary">Alert</span>
+          SkinAlert
         </a>
 
-        <ul class="hidden items-center gap-1 lg:flex">
+        <ul class="hidden items-center gap-2 md:flex">
           @for (link of links; track link.anchor) {
             <li>
               <a
                 [href]="link.anchor"
                 (click)="go($event, link.anchor)"
-                class="rounded-lg px-3.5 py-2 text-sm text-muted transition-colors duration-300 hover:bg-black/5 hover:text-ink"
+                class="rounded-full px-4 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-black/5 hover:text-black"
               >
                 {{ link.label }}
               </a>
@@ -59,19 +50,19 @@ interface NavLink {
           }
         </ul>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <a
-            href="#cta"
-            (click)="go($event, '#cta')"
+            href="#analyzer"
+            (click)="go($event, '#analyzer')"
             appRipple
-            class="btn-primary hidden rounded-xl px-5 py-2.5 text-sm font-semibold sm:inline-flex"
+            class="btn-primary hidden rounded-full px-6 py-2 text-sm font-bold md:inline-flex"
           >
-            Start Analysis
+            Analizează
           </a>
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-xl border border-line lg:hidden"
+            class="grid size-10 place-items-center rounded-full bg-black/5 text-black transition-colors hover:bg-black/10 md:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             aria-controls="mobile-menu"
@@ -89,14 +80,14 @@ interface NavLink {
       </nav>
 
       @if (menuOpen()) {
-        <div id="mobile-menu" class="glass mx-4 mt-2 rounded-2xl p-4 lg:hidden">
-          <ul class="flex flex-col gap-1">
+        <div id="mobile-menu" class="glass absolute top-20 mx-4 w-[calc(100%-2rem)] rounded-3xl p-4 md:hidden">
+          <ul class="flex flex-col gap-2">
             @for (link of links; track link.anchor) {
-              <li>
+               <li>
                 <a
                   [href]="link.anchor"
                   (click)="go($event, link.anchor)"
-                  class="block rounded-lg px-4 py-3 text-sm text-ink/80 transition-colors hover:bg-black/5 hover:text-ink"
+                  class="block rounded-2xl px-4 py-3 text-base font-medium text-black/80 transition-colors hover:bg-black/5 hover:text-black"
                 >
                   {{ link.label }}
                 </a>
@@ -104,12 +95,12 @@ interface NavLink {
             }
             <li class="mt-2">
               <a
-                href="#cta"
-                (click)="go($event, '#cta')"
+                href="#analyzer"
+                (click)="go($event, '#analyzer')"
                 appRipple
-                class="btn-primary block rounded-xl px-5 py-3 text-center text-sm font-semibold"
+                class="btn-primary block rounded-2xl px-5 py-4 text-center text-base font-bold"
               >
-                Start Analysis
+                Analizează Acum
               </a>
             </li>
           </ul>
@@ -122,12 +113,8 @@ export class NavbarComponent {
   private readonly scroll = inject(ScrollService);
 
   readonly links: NavLink[] = [
-    { label: 'Features', anchor: '#features' },
-    { label: 'Technology', anchor: '#technology' },
-    { label: 'How It Works', anchor: '#how-it-works' },
-    { label: 'About', anchor: '#about' },
-    { label: 'FAQ', anchor: '#faq' },
-    { label: 'Contact', anchor: '#contact' },
+    { label: 'Platformă AI', anchor: '#analyzer' },
+    { label: 'Funcționalități', anchor: '#features' },
   ];
 
   readonly menuOpen = signal(false);

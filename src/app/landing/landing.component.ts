@@ -39,7 +39,7 @@ import { FooterComponent } from './sections/footer/footer.component';
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-white"
     >
-      Skip to content
+      Sari la conținut
     </a>
 
     <app-navbar />
@@ -64,7 +64,6 @@ import { FooterComponent } from './sections/footer/footer.component';
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
-    // Late-loading fonts / deferred blocks can shift layout; re-measure once settled.
     const id = setTimeout(() => ScrollTrigger.refresh(), 500);
     this.refreshTimeout = id;
   }

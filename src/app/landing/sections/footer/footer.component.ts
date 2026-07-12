@@ -12,19 +12,19 @@ interface FooterColumn {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SafeHtmlPipe],
   template: `
-    <footer id="contact" class="border-t border-black/5 bg-surface">
+    <footer id="contact" class="border-t border-paper/10 bg-forest text-paper">
       <div class="mx-auto max-w-7xl px-6 py-16">
         <div class="grid gap-12 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <a href="#top" (click)="go($event, '#top')" class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-black" aria-label="SkinAlert home">
-              <span class="grid size-8 place-items-center rounded-lg bg-black text-white">
+            <a href="#top" (click)="go($event, '#top')" class="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-paper" aria-label="SkinAlert — pagina principală">
+              <span class="grid size-8 place-items-center rounded-lg bg-accent text-white">
                 <svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.6"/>
                 </svg>
               </span>
-              Skin<span class="text-black/50">Alert</span>
+              Skin<span class="text-paper/50">Alert</span>
             </a>
-            <p class="mt-5 max-w-xs text-sm leading-relaxed font-medium text-black/60">
+            <p class="mt-5 max-w-xs text-sm leading-relaxed text-paper/55">
               Detectare timpurie. Decizii mai inteligente. Asistent dermatologic bazat pe AI care te îndrumă mereu către îngrijire profesională.
             </p>
             <div class="mt-6 flex gap-3">
@@ -34,7 +34,7 @@ interface FooterColumn {
                   target="_blank"
                   rel="noopener noreferrer"
                   [attr.aria-label]="social.label"
-                  class="grid size-10 place-items-center rounded-xl border border-black/10 text-black/40 transition-all duration-300 hover:-translate-y-0.5 hover:border-black/30 hover:text-black"
+                  class="grid size-10 place-items-center rounded-full border border-paper/15 text-paper/40 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#2997ff] hover:text-[#2997ff]"
                   [innerHTML]="social.icon | safeHtml"
                 ></a>
               }
@@ -43,14 +43,14 @@ interface FooterColumn {
 
           @for (col of columns; track col.title) {
             <nav [attr.aria-label]="col.title">
-              <h3 class="text-sm font-bold tracking-wide text-black">{{ col.title }}</h3>
+              <h3 class="text-xs font-semibold uppercase tracking-[0.14em] text-paper/40">{{ col.title }}</h3>
               <ul class="mt-5 space-y-3">
                 @for (link of col.links; track link.label) {
                   <li>
                     <a
                       [href]="link.href"
                       (click)="link.href.startsWith('#') && link.href.length > 1 ? go($event, link.href) : null"
-                      class="text-sm font-medium text-black/50 transition-colors duration-300 hover:text-black"
+                      class="text-sm text-paper/60 transition-colors duration-300 hover:text-[#2997ff]"
                     >{{ link.label }}</a>
                   </li>
                 }
@@ -59,7 +59,7 @@ interface FooterColumn {
           }
         </div>
 
-        <div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-black/5 pt-8 text-xs font-bold text-black/40 sm:flex-row">
+        <div class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-paper/10 pt-8 text-xs text-paper/40 sm:flex-row">
           <p>© {{ year }} SkinAlert. Toate drepturile rezervate.</p>
           <p>Nu este un dispozitiv medical. Consultă întotdeauna un dermatolog calificat.</p>
         </div>

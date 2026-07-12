@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { gsap, ScrollTrigger } from '../../../core/gsap';
 import { MotionService } from '../../../core/motion.service';
+import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 
 interface Stat {
@@ -23,30 +24,27 @@ interface Stat {
 @Component({
   selector: 'app-stats',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective],
+  imports: [ParallaxDirective, RevealDirective],
   template: `
-    <section class="section bg-surface" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" class="sr-only">Performanță absolută.</h2>
+    <section class="bg-base pb-[clamp(4.5rem,8vw,7.5rem)]" aria-labelledby="stats-heading">
+      <h2 id="stats-heading" class="sr-only">Performanță</h2>
       <div class="mx-auto max-w-7xl px-6">
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           @for (stat of stats; track stat.label; let i = $index) {
-            <div
-              appReveal
-              mode="scale"
-              [delay]="i * 0.12"
-              class="card group relative overflow-hidden rounded-[2rem] p-8 text-center flex flex-col items-center justify-center transition-transform hover:scale-[1.02]"
-            >
-              <p class="text-[4rem] font-bold tracking-tighter tabular-nums leading-none">
-                <span class="text-black/50">{{ stat.prefix }}</span
-                ><span
-                  class="counter text-gradient-titanium"
-                  [attr.data-target]="stat.value"
-                  [attr.data-decimals]="stat.decimals"
-                  >0</span
-                ><span class="text-gradient-titanium">{{ stat.suffix }}</span>
-              </p>
-              <p class="mt-4 text-lg font-bold text-black">{{ stat.label }}</p>
-              <p class="mt-1 text-sm text-black/60">{{ stat.detail }}</p>
+            <div appParallax [speed]="0.1 + (i % 2) * 0.15">
+              <div appReveal mode="fade" [delay]="i * 0.08" class="border-t border-ink/15 pt-6">
+                <p class="text-5xl font-semibold tracking-tight tabular-nums text-ink sm:text-6xl">
+                  <span class="text-ink/40">{{ stat.prefix }}</span
+                  ><span
+                    class="counter"
+                    [attr.data-target]="stat.value"
+                    [attr.data-decimals]="stat.decimals"
+                    >0</span
+                  >{{ stat.suffix }}
+                </p>
+                <p class="mt-4 text-sm font-semibold uppercase tracking-[0.12em] text-ink">{{ stat.label }}</p>
+                <p class="mt-1 text-sm text-ink/50">{{ stat.detail }}</p>
+              </div>
             </div>
           }
         </div>
@@ -60,11 +58,12 @@ export class StatsComponent implements AfterViewInit, OnDestroy {
   private readonly motion = inject(MotionService);
   private triggers: ScrollTrigger[] = [];
 
+  /** Real metrics from ml/README.md — measured, not marketing. */
   readonly stats: Stat[] = [
-    { value: 98, prefix: '', suffix: '%', decimals: 0, label: 'Acuratețe AI', detail: '' },
-    { value: 500, prefix: '', suffix: 'K+', decimals: 0, label: 'Analize Efectuate', detail: '' },
-    { value: 24, prefix: '', suffix: '/7', decimals: 0, label: 'Disponibilitate', detail: '' },
-    { value: 5, prefix: '<', suffix: 's', decimals: 0, label: 'Timp de Răspuns', detail: '' },
+    { value: 0.968, prefix: '', suffix: '', decimals: 3, label: 'AUC pe test', detail: 'măsurat pe 2.359 imagini nevăzute' },
+    { value: 94.2, prefix: '', suffix: '%', decimals: 1, label: 'Sensibilitate', detail: 'pragul favorizează depistarea, nu liniștea falsă' },
+    { value: 87.2, prefix: '', suffix: '%', decimals: 1, label: 'Specificitate', detail: 'estimările pot greși — de aceea te îndrumăm la medic' },
+    { value: 5, prefix: '<', suffix: 's', decimals: 0, label: 'Timp de Răspuns', detail: 'de la fotografie la rezultat' },
   ];
 
   ngAfterViewInit(): void {

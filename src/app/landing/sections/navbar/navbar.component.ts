@@ -19,30 +19,34 @@ interface NavLink {
   imports: [RippleDirective],
   template: `
     <header
-      class="fixed inset-x-0 top-6 z-50 flex justify-center transition-all duration-500 will-change-transform"
-      [class.-translate-y-24]="hidden()"
-      [class.translate-y-0]="!hidden()"
+      class="glass fixed inset-x-0 top-0 z-50 border-b transition-[border-color,box-shadow] duration-300"
+      [class]="scrolled() ? 'border-black/10 shadow-[0_1px_12px_rgba(0,0,0,0.05)]' : 'border-transparent'"
     >
       <nav
-        class="glass flex items-center justify-between gap-8 rounded-full px-6 py-3 transition-all duration-500"
-        aria-label="Main navigation"
+        class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-8 px-6"
+        aria-label="Navigație principală"
       >
         <a
           href="#top"
           (click)="go($event, '#top')"
-          class="group flex items-center gap-2 pl-2 text-xl font-bold tracking-tight text-black"
-          aria-label="SkinAlert home"
+          class="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-ink"
+          aria-label="SkinAlert — pagina principală"
         >
+          <span class="grid size-7 place-items-center rounded-lg bg-accent text-white">
+            <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.6"/>
+            </svg>
+          </span>
           SkinAlert
         </a>
 
-        <ul class="hidden items-center gap-2 md:flex">
+        <ul class="hidden items-center gap-1 md:flex">
           @for (link of links; track link.anchor) {
             <li>
               <a
                 [href]="link.anchor"
                 (click)="go($event, link.anchor)"
-                class="rounded-full px-4 py-2 text-sm font-medium text-black/70 transition-colors hover:bg-black/5 hover:text-black"
+                class="rounded-full px-4 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-black/5 hover:text-ink"
               >
                 {{ link.label }}
               </a>
@@ -55,18 +59,18 @@ interface NavLink {
             href="#analyzer"
             (click)="go($event, '#analyzer')"
             appRipple
-            class="btn-primary hidden rounded-full px-6 py-2 text-sm font-bold md:inline-flex"
+            class="btn-accent hidden px-5 py-2 text-sm md:inline-flex"
           >
             Analizează
           </a>
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-full bg-black/5 text-black transition-colors hover:bg-black/10 md:hidden"
+            class="grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-black/5 md:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             aria-controls="mobile-menu"
-            aria-label="Toggle menu"
+            aria-label="Deschide sau închide meniul"
           >
             <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
               @if (menuOpen()) {
@@ -80,14 +84,14 @@ interface NavLink {
       </nav>
 
       @if (menuOpen()) {
-        <div id="mobile-menu" class="glass absolute top-20 mx-4 w-[calc(100%-2rem)] rounded-3xl p-4 md:hidden">
-          <ul class="flex flex-col gap-2">
+        <div id="mobile-menu" class="border-t border-black/5 px-6 pb-6 pt-3 md:hidden">
+          <ul class="flex flex-col gap-1">
             @for (link of links; track link.anchor) {
                <li>
                 <a
                   [href]="link.anchor"
                   (click)="go($event, link.anchor)"
-                  class="block rounded-2xl px-4 py-3 text-base font-medium text-black/80 transition-colors hover:bg-black/5 hover:text-black"
+                  class="block rounded-xl px-4 py-3 text-base font-medium text-ink/80 transition-colors hover:bg-black/5 hover:text-ink"
                 >
                   {{ link.label }}
                 </a>
@@ -98,7 +102,7 @@ interface NavLink {
                 href="#analyzer"
                 (click)="go($event, '#analyzer')"
                 appRipple
-                class="btn-primary block rounded-2xl px-5 py-4 text-center text-base font-bold"
+                class="btn-accent block rounded-xl px-5 py-3.5 text-center text-base"
               >
                 Analizează Acum
               </a>
@@ -114,17 +118,15 @@ export class NavbarComponent {
 
   readonly links: NavLink[] = [
     { label: 'Platformă AI', anchor: '#analyzer' },
+    { label: 'Cum funcționează', anchor: '#how-it-works' },
+    { label: 'Tehnologie', anchor: '#technology' },
     { label: 'Funcționalități', anchor: '#features' },
+    { label: 'FAQ', anchor: '#faq' },
   ];
 
   readonly menuOpen = signal(false);
 
   readonly scrolled = computed(() => this.scroll.scrollY() > 24);
-
-  /** Hide when scrolling down past the hero, reveal on any upward scroll. */
-  readonly hidden = computed(
-    () => this.scroll.direction() === 1 && this.scroll.scrollY() > 600 && !this.menuOpen(),
-  );
 
   go(event: Event, anchor: string): void {
     event.preventDefault();

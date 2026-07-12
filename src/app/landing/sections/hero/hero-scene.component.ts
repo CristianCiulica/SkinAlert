@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { ScrollTrigger } from '../../../core/gsap';
 import { MotionService } from '../../../core/motion.service';
-import { NeuralOrbScene } from '../../../core/three/neural-orb.scene';
+import type { NeuralOrbScene } from '../../../core/three/neural-orb.scene';
 
 /**
  * Hosts the Three.js neural-orb canvas. The canvas is fixed behind the
@@ -38,8 +38,16 @@ export class HeroSceneComponent implements AfterViewInit, OnDestroy {
   private resizeObserver?: ResizeObserver;
   private scrollTrigger?: ScrollTrigger;
 
+  private destroyed = false;
+
   ngAfterViewInit(): void {
-    this.zone.runOutsideAngular(() => {
+    // Three.js is heavy — load it lazily so it never blocks first paint.
+    this.zone.runOutsideAngular(async () => {
+      const { NeuralOrbScene } = await import('../../../core/three/neural-orb.scene');
+      if (this.destroyed) {
+        return;
+      }
+
       this.scene = new NeuralOrbScene(this.canvasRef().nativeElement, {
         reducedMotion: this.motion.reducedMotion(),
       });
@@ -71,6 +79,7 @@ export class HeroSceneComponent implements AfterViewInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     window.removeEventListener('pointermove', this.onPointerMove);
     this.resizeObserver?.disconnect();
     this.scrollTrigger?.kill();

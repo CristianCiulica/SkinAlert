@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  inject,
+  viewChild,
+} from '@angular/core';
+import { gsap } from '../../../core/gsap';
+import { MotionService } from '../../../core/motion.service';
 import { ScrollService } from '../../../core/scroll.service';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 import { RippleDirective } from '../../../shared/directives/ripple.directive';
@@ -7,38 +18,83 @@ import { HeroSceneComponent } from './hero-scene.component';
 @Component({
   selector: 'app-hero',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective, RippleDirective],
+  imports: [RevealDirective, RippleDirective, HeroSceneComponent],
   template: `
-    <section id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh">
-      <!-- Ambient light overlays -->
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0 mix-blend-overlay">
-        <div class="absolute -top-40 left-1/2 h-[50rem] w-[80rem] -translate-x-1/2 rounded-full bg-white/40 blur-[100px]"></div>
-      </div>
+    <section #wrap id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh">
+      <!-- Neural orb: translucent glass sphere behind the headline -->
+      <app-hero-scene aria-hidden="true" class="pointer-events-none opacity-80" />
 
-      <div class="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
-        <p appReveal mode="fade" class="section-label mb-6 text-black/50">O nouă eră a analizei dermatologice</p>
+      <div #content class="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
+        <p appReveal mode="fade" class="mb-8 inline-flex items-center gap-2 rounded-full border border-ink/15 bg-paper/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink/60 backdrop-blur-sm">
+          <span class="size-1.5 rounded-full bg-accent ring-2 ring-accent/40" aria-hidden="true"></span>
+          Analiză dermatologică cu AI
+        </p>
 
-        <h1 class="text-balance text-[4.5rem] font-bold leading-[1.02] tracking-tighter sm:text-[6.5rem] lg:text-[8.5rem] text-black drop-shadow-sm">
-          <span appReveal mode="words" [stagger]="0.07" class="block">Descoperă</span>
-          <span appReveal mode="blur" [delay]="0.45" class="block text-gradient">
-            ce îți spune pielea.
-          </span>
+        <h1 class="text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
+          <span appReveal mode="words" [stagger]="0.07" class="block">Descoperă ce îți</span>
+          <span appReveal mode="blur" [delay]="0.45" class="block text-gradient">spune pielea.</span>
         </h1>
 
-        <div appReveal mode="fade" [delay]="0.9" class="mt-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
-          <a href="#analyzer" (click)="go($event, '#analyzer')" appRipple class="btn-primary px-12 py-5 text-xl backdrop-blur-md">
+        <p appReveal mode="fade" [delay]="0.7" class="mt-8 max-w-xl text-lg leading-relaxed text-ink/60 sm:text-xl">
+          Fotografiază o aluniță și primește în câteva secunde o estimare a riscului,
+          explicată vizual — mereu cu îndrumare către un medic dermatolog.
+        </p>
+
+        <div appReveal mode="fade" [delay]="0.9" class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a href="#analyzer" (click)="go($event, '#analyzer')" appRipple class="btn-accent px-9 py-4 text-base">
             Analizează Acum
           </a>
-          <a href="#how-it-works" (click)="go($event, '#how-it-works')" appRipple class="btn-ghost px-10 py-5 text-xl font-medium text-black">
-            Află Mai Multe
+          <a href="#how-it-works" (click)="go($event, '#how-it-works')" appRipple class="btn-ghost px-8 py-4 text-base">
+            Cum funcționează
           </a>
         </div>
+      </div>
+
+      <!-- Scroll hint -->
+      <div #hint aria-hidden="true" class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3">
+        <span class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-ink/40">Derulează</span>
+        <span class="scroll-hint block h-8 w-px bg-ink/30"></span>
       </div>
     </section>
   `,
 })
-export class HeroComponent {
+export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly scroll = inject(ScrollService);
+  private readonly zone = inject(NgZone);
+  private readonly motion = inject(MotionService);
+
+  private readonly wrap = viewChild.required<ElementRef<HTMLElement>>('wrap');
+  private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
+  private readonly hint = viewChild.required<ElementRef<HTMLElement>>('hint');
+
+  private timeline?: gsap.core.Timeline;
+
+  ngAfterViewInit(): void {
+    if (this.motion.reducedMotion()) {
+      return;
+    }
+
+    // Exit parallax: while the hero scrolls out, the copy drifts down
+    // slower than the page and softens — the orb appears to overtake it.
+    this.zone.runOutsideAngular(() => {
+      this.timeline = gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: this.wrap().nativeElement,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        })
+        .to(this.content().nativeElement, { yPercent: 22, autoAlpha: 0.2, ease: 'none' }, 0)
+        .to(this.hint().nativeElement, { autoAlpha: 0, ease: 'none', duration: 0.25 }, 0);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.timeline?.scrollTrigger?.kill();
+    this.timeline?.kill();
+  }
 
   go(event: Event, anchor: string): void {
     event.preventDefault();

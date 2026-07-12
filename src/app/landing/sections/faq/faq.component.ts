@@ -11,45 +11,50 @@ interface FaqItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RevealDirective],
   template: `
-    <section id="faq" class="section bg-surface" aria-labelledby="faq-heading">
-      <div class="mx-auto max-w-3xl px-6">
-        <p appReveal mode="fade" class="section-label">Întrebări Frecvente</p>
-        <h2 id="faq-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-bold tracking-tighter text-black sm:text-5xl">
-          Răspunsuri clare. Fără ambiguități.
-        </h2>
+    <section id="faq" class="section bg-base" aria-labelledby="faq-heading">
+      <div class="mx-auto max-w-7xl px-6">
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+          <div>
+            <p appReveal mode="fade" class="section-label">06 — Întrebări frecvente</p>
+            <h2 id="faq-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+              Răspunsuri clare. Fără ambiguități.
+            </h2>
+          </div>
 
-        <div class="mt-12 space-y-3">
-          @for (item of items; track item.question; let i = $index) {
-            <div appReveal mode="fade" [delay]="i * 0.06" class="card overflow-hidden rounded-2xl transition-colors duration-300" [class.border-black]="open() === i">
-              <button
-                type="button"
-                class="flex w-full items-center justify-between gap-4 px-6 py-5 text-left font-bold transition-colors hover:text-black/70 text-black"
-                [attr.aria-expanded]="open() === i"
-                [attr.aria-controls]="'faq-panel-' + i"
-                (click)="toggle(i)"
-              >
-                {{ item.question }}
-                <svg
-                  viewBox="0 0 24 24"
-                  class="size-5 shrink-0 text-black transition-transform duration-500"
-                  [class.rotate-45]="open() === i"
-                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"
+          <div class="mt-2">
+            @for (item of items; track item.question; let i = $index) {
+              <div appReveal mode="fade" [delay]="i * 0.05" class="border-t border-ink/10 last:border-b">
+                <button
+                  type="button"
+                  class="flex w-full items-center justify-between gap-6 py-6 text-left text-lg font-semibold tracking-tight text-ink transition-colors hover:text-ink/60"
+                  [attr.aria-expanded]="open() === i"
+                  [attr.aria-controls]="'faq-panel-' + i"
+                  (click)="toggle(i)"
                 >
-                  <path d="M12 5v14M5 12h14"/>
-                </svg>
-              </button>
-              <div
-                [id]="'faq-panel-' + i"
-                role="region"
-                class="grid transition-[grid-template-rows] duration-500 ease-out"
-                [style.gridTemplateRows]="open() === i ? '1fr' : '0fr'"
-              >
-                <div class="overflow-hidden">
-                  <p class="px-6 pb-6 leading-relaxed font-medium text-black/60">{{ item.answer }}</p>
+                  {{ item.question }}
+                  <span
+                    class="grid size-9 shrink-0 place-items-center rounded-full border border-ink/15 transition-all duration-500"
+                    [class]="open() === i ? 'rotate-45 bg-accent border-accent text-white' : ''"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                  </span>
+                </button>
+                <div
+                  [id]="'faq-panel-' + i"
+                  role="region"
+                  class="grid transition-[grid-template-rows] duration-500 ease-out"
+                  [style.gridTemplateRows]="open() === i ? '1fr' : '0fr'"
+                >
+                  <div class="overflow-hidden">
+                    <p class="max-w-2xl pb-7 leading-relaxed text-ink/60">{{ item.answer }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
       </div>
     </section>
@@ -69,7 +74,7 @@ export class FaqComponent {
     },
     {
       question: 'Cât de precisă este inteligența artificială?',
-      answer: 'Modelele noastre ating o acuratețe de până la 98% pe seturile de date clinice. În lumea reală, precizia depinde de calitatea fotografiei și tipul leziunii, motiv pentru care orice rezultat suspect îndrumă către o vizită la specialist.',
+      answer: 'Pe 2.359 de imagini de test nevăzute, modelul atinge un AUC de 0.968, cu sensibilitate de 94,2% și specificitate de 87,2%. Pe pozele făcute cu telefonul precizia scade (AUC 0.921) față de imaginile dermatoscopice — de aceea ghidul de captură contează, iar orice rezultat suspect te îndrumă către un specialist. Estimările pot greși în ambele direcții.',
     },
     {
       question: 'Ce se întâmplă cu fotografiile mele?',

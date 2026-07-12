@@ -5,10 +5,8 @@ import { HeroComponent } from './sections/hero/hero.component';
 import { StatsComponent } from './sections/stats/stats.component';
 import { TimelineComponent } from './sections/timeline/timeline.component';
 import { TechnologyComponent } from './sections/technology/technology.component';
-import { StickyShowcaseComponent } from './sections/showcase/sticky-showcase.component';
 import { FeatureGridComponent } from './sections/feature-grid/feature-grid.component';
 import { ComparisonComponent } from './sections/comparison/comparison.component';
-import { TestimonialsComponent } from './sections/testimonials/testimonials.component';
 import { DisclaimerComponent } from './sections/disclaimer/disclaimer.component';
 import { FaqComponent } from './sections/faq/faq.component';
 import { CtaComponent } from './sections/cta/cta.component';
@@ -24,10 +22,8 @@ import { FooterComponent } from './sections/footer/footer.component';
     StatsComponent,
     TimelineComponent,
     TechnologyComponent,
-    StickyShowcaseComponent,
     FeatureGridComponent,
     ComparisonComponent,
-    TestimonialsComponent,
     DisclaimerComponent,
     FaqComponent,
     CtaComponent,
@@ -50,10 +46,8 @@ import { FooterComponent } from './sections/footer/footer.component';
       <app-stats />
       <app-timeline />
       <app-technology />
-      <app-sticky-showcase />
       <app-feature-grid />
       <app-comparison />
-      <app-testimonials />
       <app-disclaimer />
       <app-faq />
       <app-cta />

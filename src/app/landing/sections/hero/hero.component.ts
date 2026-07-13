@@ -13,16 +13,19 @@ import { MotionService } from '../../../core/motion.service';
 import { ScrollService } from '../../../core/scroll.service';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 import { RippleDirective } from '../../../shared/directives/ripple.directive';
-import { HeroSceneComponent } from './hero-scene.component';
 
 @Component({
   selector: 'app-hero',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective, RippleDirective, HeroSceneComponent],
+  imports: [RevealDirective, RippleDirective],
   template: `
     <section #wrap id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh pt-16">
-      <!-- Neural orb: translucent glass sphere behind the headline -->
-      <app-hero-scene aria-hidden="true" class="pointer-events-none opacity-80" />
+      <!-- Premium Organic Skin & Clinical Gradient Background -->
+      <div aria-hidden="true" class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] rounded-full bg-[#fde8d7] blur-[120px] opacity-60"></div>
+        <div class="absolute top-[30%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#fce0cf] blur-[140px] opacity-50"></div>
+        <div class="absolute -bottom-[10%] left-[10%] w-[50%] h-[50%] rounded-full bg-[#e6f4ff] blur-[120px] opacity-70"></div>
+      </div>
 
       <div #content class="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
         <h1 class="text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">

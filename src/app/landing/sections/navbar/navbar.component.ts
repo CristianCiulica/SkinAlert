@@ -32,9 +32,9 @@ interface NavLink {
           class="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-ink"
           aria-label="SkinAlert — pagina principală"
         >
-          <span class="grid size-7 place-items-center rounded-lg bg-accent text-white">
-            <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2l7 4v6c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.6"/>
+          <span class="grid size-8 place-items-center rounded-[0.55rem] bg-ink text-white shadow-sm transition-transform hover:scale-105">
+            <svg viewBox="0 0 24 24" class="size-4.5" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"/>
             </svg>
           </span>
           SkinAlert

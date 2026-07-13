@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
-import { RevealDirective } from '../../../shared/directives/reveal.directive';
+import { ChangeDetectionStrategy, Component, ElementRef, AfterViewInit, ViewChildren, QueryList, ViewChild, OnDestroy } from '@angular/core';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface BentoCard {
   title: string;
@@ -12,34 +14,31 @@ interface BentoCard {
 @Component({
   selector: 'app-feature-grid',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ParallaxDirective, RevealDirective, SafeHtmlPipe],
+  imports: [SafeHtmlPipe],
   template: `
-    <section id="features" class="section bg-base" aria-labelledby="grid-heading">
+    <section id="features" class="section bg-base overflow-hidden" aria-labelledby="grid-heading">
       <div class="mx-auto max-w-7xl px-6">
         <div class="mb-14">
-          <p appReveal mode="fade" class="section-label">04 — Funcționalități</p>
-          <h2 id="grid-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+          <p class="section-label">04 — Funcționalități</p>
+          <h2 id="grid-heading" class="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
             Instrumente clare, gândite pentru prevenție.
           </h2>
         </div>
 
-        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="perspective: 1000px;">
           @for (card of cards; track card.title; let i = $index) {
-            <div appParallax [speed]="0.08 + (i % 3) * 0.07" class="flex">
+            <div #featureCard class="flex will-change-transform">
               <div
-                appReveal
-                mode="fade"
-                [delay]="(i % 3) * 0.08"
-                class="card group relative flex min-h-[14rem] flex-1 flex-col justify-between rounded-2xl p-7"
+                class="card group relative flex min-h-[14rem] flex-1 flex-col justify-between rounded-2xl p-7 bg-white/40 shadow-sm border border-ink/5 backdrop-blur-md"
               >
                 <span
                   class="grid size-12 place-items-center rounded-full bg-sage text-accent transition-colors duration-300 group-hover:bg-accent group-hover:text-white"
                   [innerHTML]="card.icon | safeHtml"
                   aria-hidden="true"
                 ></span>
-                <div>
+                <div class="mt-8">
                   <h3 class="text-xl font-semibold tracking-tight text-ink">{{ card.title }}</h3>
-                  <p class="mt-2 text-[0.95rem] leading-relaxed text-ink/55">{{ card.description }}</p>
+                  <p class="mt-2 text-[0.95rem] leading-relaxed text-ink/60">{{ card.description }}</p>
                 </div>
               </div>
             </div>
@@ -49,7 +48,48 @@ interface BentoCard {
     </section>
   `,
 })
-export class FeatureGridComponent {
+export class FeatureGridComponent implements AfterViewInit, OnDestroy {
+  @ViewChildren('featureCard') featureCards!: QueryList<ElementRef<HTMLElement>>;
+
+  private triggers: ScrollTrigger[] = [];
+
+  ngAfterViewInit() {
+    const cards = this.featureCards.map(c => c.nativeElement);
+
+    cards.forEach((card, index) => {
+      // Premium initial state: pushed down, scaled down slightly, rotated back, blurred
+      gsap.set(card, {
+        y: 120,
+        opacity: 0,
+        scale: 0.9,
+        rotationX: 15,
+        filter: 'blur(12px)'
+      });
+
+      // Individual scroll-linked animation for organic waterfall effect
+      const trigger = ScrollTrigger.create({
+        trigger: card,
+        start: 'top 95%', // Begin when card is just entering viewport
+        end: 'top 65%',   // Complete when card is comfortably in view
+        scrub: 1.5,       // High smoothing for premium "Apple-like" feel
+        animation: gsap.to(card, {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotationX: 0,
+          filter: 'blur(0px)',
+          ease: 'power3.out'
+        })
+      });
+
+      this.triggers.push(trigger);
+    });
+  }
+
+  ngOnDestroy() {
+    this.triggers.forEach(t => t.kill());
+  }
+
   private icon(path: string): string {
     return `<svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
   }

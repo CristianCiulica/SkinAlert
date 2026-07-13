@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 
 interface FaqItem {
@@ -7,40 +6,52 @@ interface FaqItem {
   answer: string;
 }
 
+/**
+ * "05 — Întrebări" — accordion on hairlines. The plus marker is two CSS
+ * lines that rotate into a cross; the panel animates via grid rows.
+ */
 @Component({
   selector: 'app-faq',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ParallaxDirective, RevealDirective],
+  imports: [RevealDirective],
   template: `
     <section id="faq" class="section bg-base" aria-labelledby="faq-heading">
-      <div class="mx-auto max-w-7xl px-6">
-        <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
-          <div appParallax [speed]="0.18">
-            <p appReveal mode="fade" class="section-label">06 — Întrebări frecvente</p>
-            <h2 id="faq-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-              Ce trebuie să știi înainte să încerci.
-            </h2>
-          </div>
+      <div class="container-edit">
+        <div class="rule flex items-baseline justify-between pt-6">
+          <p appReveal mode="fade" class="index-label">05</p>
+          <p appReveal mode="fade" class="index-label">Întrebări</p>
+        </div>
 
-          <div class="mt-2">
+        <div class="mt-16 grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:gap-20">
+          <h2
+            id="faq-heading"
+            appReveal
+            mode="words"
+            [stagger]="0.04"
+            class="headline text-[clamp(2.25rem,4.5vw,3.5rem)] text-ink"
+          >
+            Înainte să <em class="serif-accent">încerci</em>.
+          </h2>
+
+          <div>
             @for (item of items; track item.question; let i = $index) {
-              <div appReveal mode="fade" [delay]="i * 0.05" class="border-t border-ink/10 last:border-b">
+              <div appReveal mode="fade" [delay]="i * 0.05" class="rule last:border-b last:border-b-ink/12">
                 <button
                   type="button"
-                  class="flex w-full items-center justify-between gap-6 py-6 text-left text-lg font-semibold tracking-tight text-ink transition-colors hover:text-ink/60"
+                  class="group flex w-full items-center justify-between gap-6 py-7 text-left text-lg font-medium tracking-tight text-ink transition-colors hover:text-ink/60 sm:text-xl"
                   [attr.aria-expanded]="open() === i"
                   [attr.aria-controls]="'faq-panel-' + i"
                   (click)="toggle(i)"
                 >
                   {{ item.question }}
-                  <span
-                    class="grid size-9 shrink-0 place-items-center rounded-full border border-ink/15 transition-all duration-500"
-                    [class]="open() === i ? 'rotate-45 bg-accent border-accent text-white' : ''"
-                    aria-hidden="true"
-                  >
-                    <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                      <path d="M12 5v14M5 12h14"/>
-                    </svg>
+                  <span class="relative block size-4 shrink-0" aria-hidden="true">
+                    <span
+                      class="absolute left-0 top-1/2 h-px w-full bg-current transition-transform duration-500"
+                    ></span>
+                    <span
+                      class="absolute left-1/2 top-0 h-full w-px bg-current transition-transform duration-500"
+                      [class]="open() === i ? 'scale-y-0' : ''"
+                    ></span>
                   </span>
                 </button>
                 <div
@@ -50,7 +61,7 @@ interface FaqItem {
                   [style.gridTemplateRows]="open() === i ? '1fr' : '0fr'"
                 >
                   <div class="overflow-hidden">
-                    <p class="max-w-2xl pb-7 leading-relaxed text-ink/60">{{ item.answer }}</p>
+                    <p class="max-w-2xl pb-8 leading-relaxed text-ink/55">{{ item.answer }}</p>
                   </div>
                 </div>
               </div>
@@ -70,24 +81,29 @@ export class FaqComponent {
 
   readonly items: FaqItem[] = [
     {
-      question: 'Oferă SkinAlert un diagnostic medical?',
-      answer: 'Nu. SkinAlert estimează un nivel de risc din analizarea imaginilor cu rolul de a crește gradul de conștientizare. Doar un medic dermatolog calificat poate stabili un diagnostic, de obicei prin dermatoscopie și biopsie, dacă este cazul.',
+      question: 'Pune SkinAlert diagnostice?',
+      answer:
+        'Nu. SkinAlert estimează un nivel de risc ca să te ajute să decizi cât de repede mergi la medic. Doar un dermatolog poate stabili un diagnostic — de obicei prin dermatoscopie și, dacă e cazul, biopsie.',
     },
     {
-      question: 'Cât de precisă este inteligența artificială?',
-      answer: 'Pe 2.359 de imagini de test nevăzute, modelul atinge un AUC de 0.968, cu sensibilitate de 94,2% și specificitate de 87,2%. Pe pozele făcute cu telefonul precizia scade (AUC 0.921) față de imaginile dermatoscopice — de aceea ghidul de captură contează, iar orice rezultat suspect te îndrumă către un specialist. Estimările pot greși în ambele direcții.',
+      question: 'Cât de precisă este analiza?',
+      answer:
+        'Pe 2.359 de imagini de test nevăzute, modelul atinge un AUC de 0,968, cu o rată de detectare de 94,2%. Pe pozele făcute cu telefonul precizia scade față de imaginile de laborator — de aceea claritatea fotografiei contează, iar estimările pot greși în ambele direcții.',
     },
     {
       question: 'Ce se întâmplă cu fotografiile mele?',
-      answer: 'Fotografiile sunt criptate la stocare și în tranzit. Nu sunt niciodată vândute sau distribuite către terți și pot fi șterse definitiv din sistem oricând dorești.',
+      answer:
+        'Fotografia e trimisă serverului de analiză, procesată în memorie și nu e salvată nicăieri. Nu există cont, deci nu păstrăm nimic despre tine după ce primești rezultatul.',
     },
     {
-      question: 'Ce tipuri de fotografii funcționează cel mai bine?',
-      answer: 'Fotografii clare, bine iluminate, realizate cât mai aproape de leziune. Ghidul de captură inclus în aplicație te va ajuta să încadrezi imaginea corect pentru cele mai bune rezultate.',
+      question: 'Ce fel de fotografii funcționează cel mai bine?',
+      answer:
+        'Clare, bine luminate, făcute aproape de aluniță. Dacă imaginea nu e suficient de bună, aplicația îți spune și te lasă să reîncerci.',
     },
     {
-      question: 'Este SkinAlert un dispozitiv medical aprobat?',
-      answer: 'SkinAlert este un instrument de triaj și conștientizare. Nu este un dispozitiv de diagnostic omologat și nu trebuie utilizat ca substitut pentru sfatul unui medic profesionist.',
+      question: 'Este un dispozitiv medical omologat?',
+      answer:
+        'Nu. SkinAlert este un instrument de triaj și conștientizare, nu un substitut pentru consultul unui medic.',
     },
   ];
 }

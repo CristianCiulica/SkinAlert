@@ -1,41 +1,63 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ScrollService } from '../../../core/scroll.service';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
-import { RippleDirective } from '../../../shared/directives/ripple.directive';
+import { MagneticDirective } from '../../../shared/directives/magnetic.directive';
 
+/**
+ * The page's single dark moment: one question, one action, one honest
+ * caveat. Flows straight into the footer, which shares the ink ground.
+ */
 @Component({
   selector: 'app-cta',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ParallaxDirective, RevealDirective, RippleDirective],
+  imports: [RevealDirective, MagneticDirective],
   template: `
-    <section id="cta" class="overflow-hidden bg-forest py-[clamp(5rem,10vw,9rem)] text-paper" aria-labelledby="cta-heading">
-      <div class="relative mx-auto max-w-4xl px-6 text-center" appParallax [speed]="0.25">
-        <h2 id="cta-heading" appReveal mode="words" [stagger]="0.06" class="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
-          Preia controlul asupra sănătății pielii tale.
+    <section class="bg-ink py-[clamp(7rem,14vw,12rem)] text-base" aria-labelledby="cta-heading">
+      <div class="container-edit flex flex-col items-center text-center">
+        <h2
+          id="cta-heading"
+          appReveal
+          mode="words"
+          [stagger]="0.05"
+          class="display max-w-4xl text-[clamp(2.75rem,7vw,6rem)] text-base"
+        >
+          Ai o aluniță care te <em class="serif-accent">preocupă</em>?
         </h2>
-        <p appReveal mode="fade" [delay]="0.3" class="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-paper/60">
-          Verificarea unei alunițe nu ar trebui să dureze o lună. Transformă monitorizarea
-          pielii într-un obicei de cinci secunde.
+
+        <p appReveal mode="fade" [delay]="0.25" class="mt-8 max-w-md text-lg text-base/60">
+          Verific-o în câteva secunde. Dacă e ceva, afli devreme.
         </p>
 
-        <div appReveal mode="fade" [delay]="0.5" class="mt-10">
-          <a
-            href="#analyzer"
-            appRipple
-            class="btn-accent group inline-flex items-center gap-3 px-10 py-4 text-base"
-          >
-            Începe Analiza
-            <svg viewBox="0 0 24 24" class="size-5 transition-transform duration-500 group-hover:translate-x-1.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14m-6-6 6 6-6 6"/>
-            </svg>
-          </a>
-        </div>
+        <a
+          appReveal
+          mode="scale"
+          [delay]="0.4"
+          href="#analyzer"
+          (click)="go($event)"
+          appMagnetic
+          [strength]="0.3"
+          class="btn-invert mt-12 inline-flex items-center justify-center overflow-hidden rounded-full bg-base px-10 py-5 text-lg font-medium tracking-tight text-ink transition-transform duration-500 hover:scale-[1.03] active:scale-[0.97]"
+        >
+          <span class="btn-label">
+            <span>Analizează acum</span>
+            <span aria-hidden="true">Analizează acum</span>
+          </span>
+        </a>
 
-        <p appReveal mode="fade" [delay]="0.7" class="mt-8 text-sm font-medium text-paper/40">
-          Gratuit de încercat · Fără cont necesar · Fotografiile rămân private
+        <p appReveal mode="fade" [delay]="0.5" class="mt-16 max-w-lg text-sm leading-relaxed text-base/40">
+          SkinAlert nu pune diagnostice și poate greși în ambele direcții. Orice leziune care își
+          schimbă forma, sângerează sau te îngrijorează merită văzută de un dermatolog — indiferent
+          de rezultatul de aici.
         </p>
       </div>
     </section>
   `,
 })
-export class CtaComponent {}
+export class CtaComponent {
+  private readonly scroll = inject(ScrollService);
+
+  go(event: Event): void {
+    event.preventDefault();
+    this.scroll.scrollTo('#analyzer');
+  }
+}

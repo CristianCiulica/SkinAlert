@@ -6,47 +6,45 @@ import {
   signal,
 } from '@angular/core';
 import { ScrollService } from '../../../core/scroll.service';
-import { RippleDirective } from '../../../shared/directives/ripple.directive';
 
 interface NavLink {
   label: string;
   anchor: string;
 }
 
+/**
+ * Fixed hairline bar. Transparent over the hero; gains a blurred paper
+ * background after the fold. Hides on scroll-down, returns on scroll-up.
+ * Wordmark only — no logo glyph, no icons.
+ */
 @Component({
   selector: 'app-navbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RippleDirective],
   template: `
     <header
-      class="glass fixed inset-x-0 top-0 z-50 border-b transition-[border-color,box-shadow] duration-300"
-      [class]="scrolled() ? 'border-black/10 shadow-[0_1px_12px_rgba(0,0,0,0.05)]' : 'border-transparent'"
+      class="fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,backdrop-filter] duration-500"
+      [class]="hidden() ? '-translate-y-full' : 'translate-y-0'"
+      [style.background]="scrolled() ? 'rgba(251,251,253,0.82)' : 'transparent'"
+      [style.backdropFilter]="scrolled() ? 'blur(20px) saturate(1.6)' : 'none'"
+      [style.borderBottom]="scrolled() ? '1px solid rgba(29,29,31,0.08)' : '1px solid transparent'"
     >
-      <nav
-        class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-8 px-6"
-        aria-label="Navigație principală"
-      >
+      <nav class="container-edit flex h-16 items-center justify-between" aria-label="Navigație principală">
         <a
           href="#top"
           (click)="go($event, '#top')"
-          class="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-ink"
+          class="text-[1.0625rem] font-semibold tracking-tight text-ink"
           aria-label="SkinAlert — pagina principală"
         >
-          <span class="grid size-8 place-items-center rounded-[0.55rem] bg-ink text-white shadow-sm transition-transform hover:scale-105">
-            <svg viewBox="0 0 24 24" class="size-4.5" fill="currentColor" aria-hidden="true">
-              <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z"/>
-            </svg>
-          </span>
           SkinAlert
         </a>
 
-        <ul class="hidden items-center gap-1 lg:flex">
+        <ul class="hidden items-center gap-8 lg:flex">
           @for (link of links; track link.anchor) {
             <li>
               <a
                 [href]="link.anchor"
                 (click)="go($event, link.anchor)"
-                class="whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-black/5 hover:text-ink"
+                class="link-draw text-sm font-medium text-ink/60 transition-colors hover:text-ink"
               >
                 {{ link.label }}
               </a>
@@ -54,57 +52,62 @@ interface NavLink {
           }
         </ul>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <a
             href="#analyzer"
             (click)="go($event, '#analyzer')"
-            appRipple
-            class="btn-accent hidden whitespace-nowrap px-5 py-2 text-sm lg:inline-flex"
+            class="btn-pill hidden items-center justify-center px-5 py-2 text-sm lg:inline-flex"
           >
-            Analizează
+            <span class="btn-label">
+              <span>Analizează</span>
+              <span aria-hidden="true">Analizează</span>
+            </span>
           </a>
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-black/5 lg:hidden"
+            class="relative flex h-10 w-10 flex-col items-center justify-center gap-[5px] lg:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             aria-controls="mobile-menu"
             aria-label="Deschide sau închide meniul"
           >
-            <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-              @if (menuOpen()) {
-                <path d="M6 6l12 12M18 6L6 18" />
-              } @else {
-                <path d="M4 7h16M4 12h16M4 17h16" />
-              }
-            </svg>
+            <span
+              class="h-px w-5 bg-ink transition-transform duration-300"
+              [class]="menuOpen() ? 'translate-y-[3px] rotate-45' : ''"
+            ></span>
+            <span
+              class="h-px w-5 bg-ink transition-transform duration-300"
+              [class]="menuOpen() ? '-translate-y-[3px] -rotate-45' : ''"
+            ></span>
           </button>
         </div>
       </nav>
 
       @if (menuOpen()) {
-        <div id="mobile-menu" class="border-t border-black/5 px-6 pb-6 pt-3 lg:hidden">
-          <ul class="flex flex-col gap-1">
+        <div
+          id="mobile-menu"
+          class="border-t border-ink/8 bg-base/95 px-6 pb-8 pt-4 backdrop-blur-xl lg:hidden"
+        >
+          <ul class="flex flex-col">
             @for (link of links; track link.anchor) {
-               <li>
+              <li class="rule first:border-t-0">
                 <a
                   [href]="link.anchor"
                   (click)="go($event, link.anchor)"
-                  class="block rounded-xl px-4 py-3 text-base font-medium text-ink/80 transition-colors hover:bg-black/5 hover:text-ink"
+                  class="block py-4 text-2xl font-semibold tracking-tight text-ink"
                 >
                   {{ link.label }}
                 </a>
               </li>
             }
-            <li class="mt-2">
+            <li class="mt-6">
               <a
                 href="#analyzer"
                 (click)="go($event, '#analyzer')"
-                appRipple
-                class="btn-accent block rounded-xl px-5 py-3.5 text-center text-base"
+                class="btn-pill inline-flex w-full px-6 py-4 text-base"
               >
-                Analizează Acum
+                Analizează o fotografie
               </a>
             </li>
           </ul>
@@ -117,16 +120,19 @@ export class NavbarComponent {
   private readonly scroll = inject(ScrollService);
 
   readonly links: NavLink[] = [
-    { label: 'Platformă AI', anchor: '#analyzer' },
+    { label: 'Analiză', anchor: '#analyzer' },
     { label: 'Cum funcționează', anchor: '#how-it-works' },
+    { label: 'Precizie', anchor: '#accuracy' },
     { label: 'Tehnologie', anchor: '#technology' },
-    { label: 'Funcționalități', anchor: '#features' },
-    { label: 'FAQ', anchor: '#faq' },
+    { label: 'Întrebări', anchor: '#faq' },
   ];
 
   readonly menuOpen = signal(false);
 
   readonly scrolled = computed(() => this.scroll.scrollY() > 24);
+  readonly hidden = computed(
+    () => !this.menuOpen() && this.scroll.direction() === 1 && this.scroll.scrollY() > 480,
+  );
 
   go(event: Event, anchor: string): void {
     event.preventDefault();

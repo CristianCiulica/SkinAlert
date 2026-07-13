@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { gsap, ScrollTrigger } from '../../core/gsap';
 import { MotionService } from '../../core/motion.service';
+import { splitWords } from '../split-text';
 
 export type RevealMode = 'fade' | 'blur' | 'words' | 'letters' | 'scale';
 
@@ -43,7 +44,10 @@ export class RevealDirective implements AfterViewInit, OnDestroy {
 
       let targets: Element[] | HTMLElement = host;
       if (mode === 'words' || mode === 'letters') {
-        targets = this.split(host, mode === 'words' ? 'word' : 'letter');
+        targets = splitWords(host, 'reveal-word');
+        if (mode === 'letters') {
+          targets = targets.flatMap((word) => this.explode(word as HTMLElement));
+        }
       }
 
       const from: gsap.TweenVars = {
@@ -72,21 +76,15 @@ export class RevealDirective implements AfterViewInit, OnDestroy {
     });
   }
 
-  /** Splits text nodes into spans; keeps element children intact. */
-  private split(host: HTMLElement, unit: 'word' | 'letter'): Element[] {
-    const text = host.textContent ?? '';
-    const parts = unit === 'word' ? text.split(/\s+/).filter(Boolean) : [...text.trim()];
-    host.setAttribute('aria-label', text.trim());
-    host.textContent = '';
-    return parts.map((part, i) => {
+  /** Splits a word span into per-letter spans (letters mode only). */
+  private explode(word: HTMLElement): Element[] {
+    const letters = [...(word.textContent ?? '')];
+    word.textContent = '';
+    return letters.map((letter) => {
       const span = document.createElement('span');
       span.className = 'reveal-word';
-      span.setAttribute('aria-hidden', 'true');
-      span.textContent = part === ' ' ? ' ' : part;
-      host.appendChild(span);
-      if (unit === 'word' && i < parts.length - 1) {
-        host.appendChild(document.createTextNode(' '));
-      }
+      span.textContent = letter;
+      word.appendChild(span);
       return span;
     });
   }

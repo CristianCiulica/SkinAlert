@@ -11,62 +11,61 @@ import {
 } from '@angular/core';
 import { gsap } from '../../../core/gsap';
 import { MotionService } from '../../../core/motion.service';
-import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
-import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
 
 interface TimelineStep {
   index: string;
   title: string;
   description: string;
-  icon: string;
 }
 
 /**
- * "How SkinAlert Works" — card-stacking on scroll: each step is a sticky
- * card; as the next one scrolls over it, the one underneath shrinks
- * slightly (top edges stay visible in steps). Scale is scrubbed by a
- * single ScrollTrigger timeline over the container — the exact intervals
- * of the portfolio's useTransform(progress, [i/n, 1], [1, target]).
- * No manual scroll listeners, no per-frame re-render.
+ * "02 — Cum Funcționează" — card-stacking on scroll, kept as it works:
+ * each step is a sticky card; as the next one scrolls over it, the one
+ * underneath shrinks, dims and blurs slightly. Scale is scrubbed by a
+ * single ScrollTrigger timeline over the container.
  */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ParallaxDirective, RevealDirective, SafeHtmlPipe],
+  imports: [RevealDirective],
   template: `
     <section id="how-it-works" class="section bg-base" aria-labelledby="how-heading">
-      <div class="mx-auto max-w-7xl px-6">
-        <div class="max-w-2xl" appParallax [speed]="0.15">
-          <p appReveal mode="fade" class="section-label">02 — Cum funcționează</p>
-          <h2 id="how-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-            De la fotografie la rezultat în cinci pași.
-          </h2>
-          <p appReveal mode="fade" [delay]="0.2" class="mt-6 max-w-md text-lg leading-relaxed text-ink/60">
-            Un flux simplu, criptat de la un capăt la altul, care se termină
-            întotdeauna cu o recomandare clară.
-          </p>
+      <div class="container-edit">
+        <div class="rule flex items-baseline justify-between pt-6">
+          <p appReveal mode="fade" class="index-label">02</p>
+          <p appReveal mode="fade" class="index-label">Cum funcționează</p>
         </div>
+
+        <h2
+          id="how-heading"
+          appReveal
+          mode="words"
+          [stagger]="0.04"
+          class="headline mt-16 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] text-ink"
+        >
+          De la fotografie la <em class="serif-accent">răspuns</em>.
+        </h2>
+        <p appReveal mode="fade" [delay]="0.15" class="mt-6 max-w-lg text-lg text-ink/60">
+          Patru pași. Niciun termen tehnic pe drum.
+        </p>
       </div>
 
-      <div #stack class="mx-auto mt-10 max-w-4xl px-6">
+      <div #stack class="container-edit mt-12 max-w-4xl">
         <ol>
           @for (step of steps; track step.index; let i = $index) {
             <li class="stack-wrap sticky flex h-[70vh] items-start" [style.--i]="i">
               <div
                 #card
-                class="w-full min-h-[320px] md:min-h-[420px] flex flex-col justify-between rounded-[40px] border border-ink/5 bg-white/70 p-8 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] backdrop-blur-3xl sm:p-12 md:rounded-[54px] md:p-16 transition-colors"
+                class="flex min-h-[320px] w-full flex-col justify-between rounded-[2.5rem] border border-ink/8 bg-surface p-8 sm:p-12 md:min-h-[420px] md:p-16"
                 style="transform-origin: top center"
               >
-                <div class="flex items-center justify-between">
-                  <span class="text-base md:text-lg font-semibold tabular-nums text-ink/40" aria-hidden="true">{{ step.index }}</span>
-                  <span class="grid size-12 shrink-0 place-items-center rounded-full bg-sage text-accent [&>svg]:size-6" [innerHTML]="step.icon | safeHtml" aria-hidden="true"></span>
-                </div>
+                <span class="index-label" aria-hidden="true">{{ step.index }}</span>
                 <div>
-                  <h3 class="mt-10 text-3xl font-semibold tracking-tight text-ink sm:text-4xl md:text-5xl">
+                  <h3 class="headline mt-10 text-3xl text-ink sm:text-4xl md:text-5xl">
                     {{ step.title }}
                   </h3>
-                  <p class="mt-4 max-w-xl text-xl leading-relaxed text-ink/60 md:text-2xl">
+                  <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink/60 md:text-xl">
                     {{ step.description }}
                   </p>
                 </div>
@@ -101,32 +100,26 @@ export class TimelineComponent implements AfterViewInit, OnDestroy {
     {
       index: '01',
       title: 'Fă o poză',
-      description: 'Găsește un loc cu lumină naturală și apropie telefonul la 10-15 cm de semnul de pe piele pentru o poză cât mai clară.',
-      icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
+      description:
+        'Găsește un loc luminos și fă o fotografie clară a semnului de pe piele folosind camera telefonului tău.',
     },
     {
       index: '02',
-      title: 'Totul rămâne privat',
-      description: 'Poza ta nu ajunge pe internet, ci e procesată în siguranță direct pe telefonul tău. Nici măcar nu trebuie să-ți faci un cont.',
-      icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0 4 4m-4-4-4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>`,
+      title: 'Analiză inteligentă',
+      description:
+        'Imaginea e curățată automat — fire de păr, culori — apoi două rețele neurale o analizează în opt variante și își combină răspunsurile.',
     },
     {
       index: '03',
-      title: 'Aplicația verifică poza',
-      description: 'Sistemul nostru inteligent compară pata ta cu mii de alte cazuri, uitându-se atent la formă, culoare și margini.',
-      icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>`,
+      title: 'Evaluarea riscului',
+      description:
+        'Primești în câteva secunde un scor de risc calibrat și un verdict clar — benign sau suspect — cu o recomandare pe înțelesul tău.',
     },
     {
       index: '04',
-      title: 'Afli rezultatul instant',
-      description: 'Îți spunem imediat dacă pare periculos sau nu, și colorăm pe poză exact zonele care au ridicat semne de întrebare.',
-      icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20v-6l4-4 4 3 6-7v14"/></svg>`,
-    },
-    {
-      index: '05',
-      title: 'Ce faci mai departe',
-      description: 'Dacă există un risc, îți explicăm exact cum să ajungi la un medic dermatolog, având deja poza și raportul pregătite pentru el.',
-      icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/><path d="M7 12h3l1.5-2.5L14 14l1.5-2H17"/></svg>`,
+      title: 'Consultă un medic',
+      description:
+        'Dacă riscul e crescut, nu amâna: mergi cu rezultatul la un dermatolog. Doar consultul și, la nevoie, biopsia pun un diagnostic.',
     },
   ];
 
@@ -157,22 +150,22 @@ export class TimelineComponent implements AfterViewInit, OnDestroy {
         if (i === total - 1) return;
 
         // Card i starts shrinking when Card i+1 is about to cover it
-        const startTime = (i + 0.5) / total; 
+        const startTime = (i + 0.5) / total;
         const duration = 1 - startTime;
-        
+
         const depth = total - 1 - i;
-        const targetScale = 1 - depth * 0.05; // Stronger scale
-        const targetBrightness = 1 - depth * 0.2; // Stronger dimming
-        const targetBlur = depth * 3; // Add depth of field blur
+        const targetScale = 1 - depth * 0.05;
+        const targetBrightness = 1 - depth * 0.2;
+        const targetBlur = depth * 3;
 
         this.timeline!.fromTo(
           card,
           { scale: 1, filter: 'brightness(1) blur(0px)' },
-          { 
-            scale: targetScale, 
+          {
+            scale: targetScale,
             filter: `brightness(${targetBrightness}) blur(${targetBlur}px)`,
             duration: duration,
-            ease: 'none'
+            ease: 'none',
           },
           startTime,
         );

@@ -1,35 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
 
-  /* Apple-style palette: white, soft grays, one confident blue */
-  --color-base: #ffffff;
+  /* One ink, one paper, one accent. Nothing else competes. */
+  --color-base: #fbfbfd;
   --color-surface: #f5f5f7;
-  --color-surface-elevated: #ffffff;
-
-  --color-primary: #1d1d1f;
-  --color-forest: #1d1d1f; /* dark sections */
   --color-ink: #1d1d1f;
-  --color-accent: #0071e3;
-  --color-sage: #eaf2fc; /* soft blue tint for panels/chips */
-  --color-paper: #f5f5f7; /* text/surfaces on dark sections */
-  --color-secondary: #86868b;
   --color-muted: #86868b;
-  --color-line: #d2d2d7;
+  --color-accent: #0071e3;
 
-  --color-success: #34c759;
-  --color-warning: #e8890c;
-  --color-danger: #e02f2f;
+  /* Result colors — sober, clinical, used only inside the analyzer. */
+  --color-success: #1d7f4f;
+  --color-warning: #b25e00;
+  --color-danger: #d70015;
 }
 
 html {
   scroll-behavior: initial;
-  /* Native anchor fallback (reduced motion / no Lenis) clears the fixed navbar. */
   scroll-padding-top: 6rem;
 }
 
-/* Elegant, consistent keyboard focus across every interactive element. */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
@@ -47,8 +39,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: #ffffff;
+  background: var(--color-ink);
+  color: var(--color-base);
 }
 
 /* Lenis recommended styles */
@@ -66,161 +58,170 @@ html.lenis body {
   overflow: hidden;
 }
 
-/* ---------- Editorial primitives ---------- */
+/* ---------- Typography ---------- */
 
-/* Hero backdrop: white with the faintest cool blue cast */
-.bg-mesh {
-  background-color: var(--color-base);
-  background-image:
-    radial-gradient(at 15% 0%, rgba(0, 113, 227, 0.06) 0, transparent 55%),
-    radial-gradient(at 90% 10%, rgba(90, 200, 250, 0.07) 0, transparent 50%);
-}
-
-/* Fixed nav bar: translucent white over a hairline */
-.glass {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+/* Serif italic accent inside grotesque headlines. */
+.serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-/* Flat editorial card: white, hairline border, no fluff */
-.card {
-  background: var(--color-surface-elevated);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition:
-    border-color 0.35s ease,
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease;
-}
-.card:hover {
-  border-color: rgba(0, 0, 0, 0.22);
-}
-
-/* Dark-section card variant */
-.card-dark {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(245, 245, 247, 0.12);
-  transition: border-color 0.35s ease, background-color 0.35s ease;
-}
-.card-dark:hover {
-  border-color: rgba(0, 113, 227, 0.6);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #1d1d1f 0%, #6e6e73 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Primary: near-black pill */
-.btn-primary {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--color-ink);
-  color: #f5f5f7;
-  border-radius: 9999px;
+/* Display headline — tight, confident, optical sizing at max. */
+.display {
+  font-variation-settings: "opsz" 32;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
   font-weight: 600;
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.3s ease;
-}
-.btn-primary:hover {
-  transform: scale(1.02);
-  background: #333336;
-}
-.btn-primary:active {
-  transform: scale(0.98);
+  text-wrap: balance;
 }
 
-/* Accent: Apple-blue pill, white text */
-.btn-accent {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--color-accent);
-  color: #ffffff;
-  border-radius: 9999px;
+.headline {
+  font-variation-settings: "opsz" 32;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
   font-weight: 600;
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.3s ease;
-}
-.btn-accent:hover {
-  transform: scale(1.02);
-  background: #0077ed;
-}
-.btn-accent:active {
-  transform: scale(0.98);
+  text-wrap: balance;
 }
 
-/* Secondary: hairline ghost pill */
-.btn-ghost {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  color: var(--color-ink);
-  border-radius: 9999px;
+/* Section index numeral — quiet, tabular, editorial. */
+.index-label {
+  font-size: 0.8125rem;
   font-weight: 500;
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s ease,
-    background-color 0.3s ease;
-}
-.btn-ghost:hover {
-  border-color: rgba(0, 0, 0, 0.6);
-  background: rgba(0, 0, 0, 0.04);
-  transform: scale(1.02);
-}
-.btn-ghost:active {
-  transform: scale(0.98);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
 }
 
-.ripple {
-  position: absolute;
-  border-radius: 9999px;
-  transform: scale(0);
-  animation: ripple 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  background: rgba(255, 255, 255, 0.25);
-  pointer-events: none;
-  z-index: -1;
+/* ---------- Layout primitives ---------- */
+
+.container-edit {
+  margin-inline: auto;
+  max-width: 78rem;
+  padding-inline: 1.5rem;
 }
-.btn-ghost .ripple {
-  background: rgba(0, 0, 0, 0.08);
-}
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
+@media (min-width: 640px) {
+  .container-edit {
+    padding-inline: 2.5rem;
   }
 }
 
-/* Section shell — tight editorial rhythm, no dead air */
 .section {
   position: relative;
-  padding-block: clamp(4.5rem, 8vw, 7.5rem);
+  padding-block: clamp(6rem, 11vw, 10rem);
 }
 
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+/* Hairline rules structure the page instead of boxes and shadows. */
+.rule {
+  border-top: 1px solid rgba(29, 29, 31, 0.12);
 }
-.section-label::before {
-  content: "";
-  width: 2rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.6;
+
+/* ---------- Interactive primitives ---------- */
+
+/* Primary pill — ink on paper. Label slides on hover (see .btn-label).
+   Sets no display so Tailwind's hidden/inline-flex utilities keep control. */
+.btn-pill {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  color: var(--color-base);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
+  will-change: transform;
+}
+.btn-pill:hover {
+  background: #000;
+}
+.btn-pill:active {
+  transform: scale(0.97);
+}
+
+/* Ghost pill — hairline only. */
+.btn-line {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1px solid rgba(29, 29, 31, 0.25);
+  color: var(--color-ink);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  background: transparent;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+.btn-line:hover {
+  border-color: var(--color-ink);
+  background: rgba(29, 29, 31, 0.04);
+}
+.btn-line:active {
+  transform: scale(0.97);
+}
+
+/* Dual-label slide: markup provides two stacked labels. */
+.btn-label {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.btn-label > span {
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.btn-label > span:last-child {
+  position: absolute;
+  inset: 0;
+  transform: translateY(110%);
+}
+.btn-pill:hover .btn-label > span:first-child,
+.btn-line:hover .btn-label > span:first-child,
+.btn-invert:hover .btn-label > span:first-child {
+  transform: translateY(-110%);
+}
+.btn-pill:hover .btn-label > span:last-child,
+.btn-line:hover .btn-label > span:last-child,
+.btn-invert:hover .btn-label > span:last-child {
+  transform: translateY(0);
+}
+
+/* Text link — underline draws in from the left. */
+.link-draw {
+  position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  padding-bottom: 2px;
+}
+.link-draw:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- Motion helpers ---------- */
+
+/* Line mask reveal targets: wrapper clips, inner translates.
+   Bottom padding keeps descenders (g, p, y) inside the clip;
+   the negative margin cancels it out of the layout. */
+.mask-line {
+  display: block;
+  overflow: hidden;
+  padding-block-end: 0.15em;
+  margin-block-end: -0.15em;
+}
+.mask-line > * {
+  display: block;
+  will-change: transform;
 }
 
 /* Word-stagger reveal targets */
@@ -229,38 +230,51 @@ html.lenis body {
   will-change: transform, opacity, filter;
 }
 
-/* Hero scroll hint — a soft, patient float */
-.scroll-hint {
-  animation: scrollHint 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-@keyframes scrollHint {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(8px);
-    opacity: 1;
-  }
+/* Scrubbed manifesto words */
+.scrub-word {
+  display: inline-block;
+  opacity: 0.12;
+  will-change: opacity;
 }
 
-/* Keyboard focus ring for label-wrapped inputs (e.g. the analyzer dropzone) */
-.focus-ring-within:has(:focus-visible) {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+/* Analyzer scanning sweep — a single hairline of light, no ornament. */
+.scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(251, 251, 253, 0.95);
+  box-shadow: 0 0 24px 6px rgba(251, 251, 253, 0.5);
+  animation: scanSweep 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes scanSweep {
+  0%, 100% { top: 8%; }
+  50% { top: 92%; }
 }
 
-/* Infinite tech-stack marquee — track holds two copies of the content,
-   translating -50% loops seamlessly. */
+/* Quiet breathing dot for "live" states — pure CSS, no icon. */
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: pulseDot 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+/* Marquee — factual strip, pauses on hover. */
 .marquee {
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
 }
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 36s linear infinite;
+  animation: marquee 42s linear infinite;
   will-change: transform;
 }
 .marquee:hover .marquee-track {
@@ -271,10 +285,11 @@ html.lenis body {
     transform: translateX(-50%);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
+
+/* Keyboard focus ring for label-wrapped inputs (analyzer dropzone). */
+.focus-ring-within:has(:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 /* Scrollbar */
@@ -300,5 +315,8 @@ html.lenis body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .scrub-word {
+    opacity: 1;
   }
 }

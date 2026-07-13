@@ -2,16 +2,18 @@ import { Injectable, signal } from '@angular/core';
 
 /**
  * Central source of truth for the user's motion preference.
- * Animation-heavy features (Lenis, GSAP reveals, Three.js autoplay)
- * consult this before doing any work.
+ * Animation-heavy features (Lenis, GSAP reveals) consult this before
+ * doing any work. `?static=1` forces the no-motion path — used for
+ * visual audits and automated screenshots.
  */
 @Injectable({ providedIn: 'root' })
 export class MotionService {
   private readonly query = window.matchMedia('(prefers-reduced-motion: reduce)');
+  private readonly forced = new URLSearchParams(window.location.search).has('static');
 
-  readonly reducedMotion = signal(this.query.matches);
+  readonly reducedMotion = signal(this.forced || this.query.matches);
 
   constructor() {
-    this.query.addEventListener('change', (e) => this.reducedMotion.set(e.matches));
+    this.query.addEventListener('change', (e) => this.reducedMotion.set(this.forced || e.matches));
   }
 }

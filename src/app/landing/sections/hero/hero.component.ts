@@ -20,16 +20,11 @@ import { HeroSceneComponent } from './hero-scene.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RevealDirective, RippleDirective, HeroSceneComponent],
   template: `
-    <section #wrap id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh">
+    <section #wrap id="top" class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-mesh pt-16">
       <!-- Neural orb: translucent glass sphere behind the headline -->
       <app-hero-scene aria-hidden="true" class="pointer-events-none opacity-80" />
 
       <div #content class="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-6 text-center">
-        <p appReveal mode="fade" class="mb-8 inline-flex items-center gap-2 rounded-full border border-ink/15 bg-paper/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink/60 backdrop-blur-sm">
-          <span class="size-1.5 rounded-full bg-accent ring-2 ring-accent/40" aria-hidden="true"></span>
-          Analiză dermatologică cu AI
-        </p>
-
         <h1 class="text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-7xl lg:text-[5.5rem]">
           <span appReveal mode="words" [stagger]="0.07" class="block">Descoperă ce îți</span>
           <span appReveal mode="blur" [delay]="0.45" class="block text-gradient">spune pielea.</span>
@@ -51,7 +46,7 @@ import { HeroSceneComponent } from './hero-scene.component';
       </div>
 
       <!-- Scroll hint -->
-      <div #hint aria-hidden="true" class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3">
+      <div #hint aria-hidden="true" class="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 [@media(min-height:700px)]:flex">
         <span class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-ink/40">Derulează</span>
         <span class="scroll-hint block h-8 w-px bg-ink/30"></span>
       </div>

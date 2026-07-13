@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 
 interface FaqItem {
@@ -9,15 +10,15 @@ interface FaqItem {
 @Component({
   selector: 'app-faq',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective],
+  imports: [ParallaxDirective, RevealDirective],
   template: `
     <section id="faq" class="section bg-base" aria-labelledby="faq-heading">
       <div class="mx-auto max-w-7xl px-6">
         <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
-          <div>
+          <div appParallax [speed]="0.18">
             <p appReveal mode="fade" class="section-label">06 — Întrebări frecvente</p>
             <h2 id="faq-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-              Răspunsuri clare. Fără ambiguități.
+              Ce trebuie să știi înainte să încerci.
             </h2>
           </div>
 

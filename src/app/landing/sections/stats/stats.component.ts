@@ -61,8 +61,8 @@ export class StatsComponent implements AfterViewInit, OnDestroy {
   /** Real metrics from ml/README.md — measured, not marketing. */
   readonly stats: Stat[] = [
     { value: 0.968, prefix: '', suffix: '', decimals: 3, label: 'AUC pe test', detail: 'măsurat pe 2.359 imagini nevăzute' },
-    { value: 94.2, prefix: '', suffix: '%', decimals: 1, label: 'Sensibilitate', detail: 'pragul favorizează depistarea, nu liniștea falsă' },
-    { value: 87.2, prefix: '', suffix: '%', decimals: 1, label: 'Specificitate', detail: 'estimările pot greși — de aceea te îndrumăm la medic' },
+    { value: 94.2, prefix: '', suffix: '%', decimals: 1, label: 'Sensibilitate', detail: 'pragul e ales să rateze cât mai puține leziuni maligne' },
+    { value: 87.2, prefix: '', suffix: '%', decimals: 1, label: 'Specificitate', detail: 'estimările pot greși, de aceea te îndrumăm la medic' },
     { value: 5, prefix: '<', suffix: 's', decimals: 0, label: 'Timp de Răspuns', detail: 'de la fotografie la rezultat' },
   ];
 

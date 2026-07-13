@@ -40,13 +40,13 @@ interface NavLink {
           SkinAlert
         </a>
 
-        <ul class="hidden items-center gap-1 md:flex">
+        <ul class="hidden items-center gap-1 lg:flex">
           @for (link of links; track link.anchor) {
             <li>
               <a
                 [href]="link.anchor"
                 (click)="go($event, link.anchor)"
-                class="rounded-full px-4 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-black/5 hover:text-ink"
+                class="whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-black/5 hover:text-ink"
               >
                 {{ link.label }}
               </a>
@@ -59,14 +59,14 @@ interface NavLink {
             href="#analyzer"
             (click)="go($event, '#analyzer')"
             appRipple
-            class="btn-accent hidden px-5 py-2 text-sm md:inline-flex"
+            class="btn-accent hidden whitespace-nowrap px-5 py-2 text-sm lg:inline-flex"
           >
             Analizează
           </a>
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-black/5 md:hidden"
+            class="grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-black/5 lg:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             aria-controls="mobile-menu"
@@ -84,7 +84,7 @@ interface NavLink {
       </nav>
 
       @if (menuOpen()) {
-        <div id="mobile-menu" class="border-t border-black/5 px-6 pb-6 pt-3 md:hidden">
+        <div id="mobile-menu" class="border-t border-black/5 px-6 pb-6 pt-3 lg:hidden">
           <ul class="flex flex-col gap-1">
             @for (link of links; track link.anchor) {
                <li>

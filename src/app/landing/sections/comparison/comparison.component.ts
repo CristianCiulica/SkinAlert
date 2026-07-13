@@ -23,7 +23,7 @@ interface ComparisonRow {
             <p appReveal mode="fade" [delay]="0.2" class="mt-6 max-w-lg text-lg leading-relaxed font-medium text-ink/60">
               Majoritatea oamenilor își verifică pielea rar și neregulat. SkinAlert
               transformă o fotografie de cinci secunde într-un obicei care susține
-              depistarea timpurie — cu o tehnologie care îți respectă atât inteligența, cât și intimitatea.
+              depistarea timpurie, cu datele tale criptate și private.
             </p>
 
             <ul class="mt-10 space-y-5">

@@ -1,4 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  inject,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
+import { gsap } from '../../../core/gsap';
+import { MotionService } from '../../../core/motion.service';
+import { ParallaxDirective } from '../../../shared/directives/parallax.directive';
 import { RevealDirective } from '../../../shared/directives/reveal.directive';
 import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
 
@@ -10,55 +23,80 @@ interface TimelineStep {
 }
 
 /**
- * "How SkinAlert Works" — flat editorial process list: numbered rows
- * separated by hairlines, no pinning, no scroll hijacking.
+ * "How SkinAlert Works" — card-stacking on scroll: each step is a sticky
+ * card; as the next one scrolls over it, the one underneath shrinks
+ * slightly (top edges stay visible in steps). Scale is scrubbed by a
+ * single ScrollTrigger timeline over the container — the exact intervals
+ * of the portfolio's useTransform(progress, [i/n, 1], [1, target]).
+ * No manual scroll listeners, no per-frame re-render.
  */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RevealDirective, SafeHtmlPipe],
+  imports: [ParallaxDirective, RevealDirective, SafeHtmlPipe],
   template: `
     <section id="how-it-works" class="section bg-base" aria-labelledby="how-heading">
       <div class="mx-auto max-w-7xl px-6">
-        <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
-          <div>
-            <p appReveal mode="fade" class="section-label">02 — Cum funcționează</p>
-            <h2 id="how-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-              De la fotografie la rezultat în cinci pași.
-            </h2>
-            <p appReveal mode="fade" [delay]="0.2" class="mt-6 max-w-md text-lg leading-relaxed text-ink/60">
-              Fără spreadsheet-uri, fără ghicit. Un flux clinic simplu, criptat
-              de la un capăt la altul, care se termină mereu cu o recomandare clară.
-            </p>
-          </div>
-
-          <ol class="mt-2">
-            @for (step of steps; track step.index; let i = $index) {
-              <li
-                appReveal
-                mode="fade"
-                [delay]="i * 0.06"
-                class="group grid grid-cols-[3.5rem_1fr] items-baseline gap-4 border-t border-ink/10 py-7 transition-colors duration-300 last:border-b hover:bg-ink/[0.02] sm:grid-cols-[5rem_16rem_1fr] sm:gap-8"
-              >
-                <span class="text-sm font-semibold tabular-nums text-ink/40 transition-colors duration-300 group-hover:text-ink" aria-hidden="true">
-                  {{ step.index }}
-                </span>
-                <h3 class="flex items-center gap-3 text-xl font-semibold tracking-tight text-ink">
-                  <span class="grid size-9 shrink-0 place-items-center rounded-full bg-sage text-accent" [innerHTML]="step.icon | safeHtml" aria-hidden="true"></span>
-                  {{ step.title }}
-                </h3>
-                <p class="col-span-2 mt-3 leading-relaxed text-ink/60 sm:col-span-1 sm:mt-0">
-                  {{ step.description }}
-                </p>
-              </li>
-            }
-          </ol>
+        <div class="max-w-2xl" appParallax [speed]="0.15">
+          <p appReveal mode="fade" class="section-label">02 — Cum funcționează</p>
+          <h2 id="how-heading" appReveal mode="words" [stagger]="0.05" class="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+            De la fotografie la rezultat în cinci pași.
+          </h2>
+          <p appReveal mode="fade" [delay]="0.2" class="mt-6 max-w-md text-lg leading-relaxed text-ink/60">
+            Un flux simplu, criptat de la un capăt la altul, care se termină
+            întotdeauna cu o recomandare clară.
+          </p>
         </div>
+      </div>
+
+      <div #stack class="mx-auto mt-10 max-w-4xl px-6">
+        <ol>
+          @for (step of steps; track step.index; let i = $index) {
+            <li class="stack-wrap sticky flex h-[70vh] items-start" [style.--i]="i">
+              <div
+                #card
+                class="w-full min-h-[320px] md:min-h-[420px] flex flex-col justify-between rounded-[40px] border border-ink/5 bg-white/70 p-8 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.05)] backdrop-blur-3xl sm:p-12 md:rounded-[54px] md:p-16 transition-colors"
+                style="transform-origin: top center"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-base md:text-lg font-semibold tabular-nums text-ink/40" aria-hidden="true">{{ step.index }}</span>
+                  <span class="grid size-12 shrink-0 place-items-center rounded-full bg-sage text-accent [&>svg]:size-6" [innerHTML]="step.icon | safeHtml" aria-hidden="true"></span>
+                </div>
+                <div>
+                  <h3 class="mt-10 text-3xl font-semibold tracking-tight text-ink sm:text-4xl md:text-5xl">
+                    {{ step.title }}
+                  </h3>
+                  <p class="mt-4 max-w-xl text-xl leading-relaxed text-ink/60 md:text-2xl">
+                    {{ step.description }}
+                  </p>
+                </div>
+              </div>
+            </li>
+          }
+        </ol>
       </div>
     </section>
   `,
+  styles: `
+    .stack-wrap {
+      top: calc(80px + var(--i) * 16px);
+    }
+    @media (min-width: 768px) {
+      .stack-wrap {
+        top: calc(100px + var(--i) * 24px);
+      }
+    }
+  `,
 })
-export class TimelineComponent {
+export class TimelineComponent implements AfterViewInit, OnDestroy {
+  private readonly zone = inject(NgZone);
+  private readonly motion = inject(MotionService);
+
+  private readonly stack = viewChild.required<ElementRef<HTMLElement>>('stack');
+  private readonly cards = viewChildren<ElementRef<HTMLElement>>('card');
+
+  private timeline?: gsap.core.Timeline;
+
   readonly steps: TimelineStep[] = [
     {
       index: '01',
@@ -91,4 +129,59 @@ export class TimelineComponent {
       icon: `<svg viewBox="0 0 24 24" class="size-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/><path d="M7 12h3l1.5-2.5L14 14l1.5-2H17"/></svg>`,
     },
   ];
+
+  ngAfterViewInit(): void {
+    if (this.motion.reducedMotion()) {
+      return;
+    }
+
+    this.zone.runOutsideAngular(() => {
+      const cards = this.cards().map((c) => c.nativeElement);
+      const total = cards.length;
+
+      // One scrubbed timeline (duration 1 == container progress 0→1);
+      // each card shrinks over [i/total, 1], the last one stays at 1.
+      this.timeline = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: this.stack().nativeElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      });
+      this.timeline.duration(1);
+
+      cards.forEach((card, i) => {
+        if (i === total - 1) return;
+
+        // Card i starts shrinking when Card i+1 is about to cover it
+        const startTime = (i + 0.5) / total; 
+        const duration = 1 - startTime;
+        
+        const depth = total - 1 - i;
+        const targetScale = 1 - depth * 0.05; // Stronger scale
+        const targetBrightness = 1 - depth * 0.2; // Stronger dimming
+        const targetBlur = depth * 3; // Add depth of field blur
+
+        this.timeline!.fromTo(
+          card,
+          { scale: 1, filter: 'brightness(1) blur(0px)' },
+          { 
+            scale: targetScale, 
+            filter: `brightness(${targetBrightness}) blur(${targetBlur}px)`,
+            duration: duration,
+            ease: 'none'
+          },
+          startTime,
+        );
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.timeline?.scrollTrigger?.kill();
+    this.timeline?.kill();
+  }
 }

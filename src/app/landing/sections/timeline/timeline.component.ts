@@ -44,10 +44,10 @@ interface TimelineStep {
           [stagger]="0.04"
           class="headline mt-16 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] text-ink"
         >
-          De la fotografie la <em class="serif-accent">răspuns</em>.
+          De la fotografie la răspuns.
         </h2>
         <p appReveal mode="fade" [delay]="0.15" class="mt-6 max-w-lg text-lg text-ink/60">
-          Patru pași. Niciun termen tehnic pe drum.
+          Patru pași simpli, de la poză la recomandare.
         </p>
       </div>
 

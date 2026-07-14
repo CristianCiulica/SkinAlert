@@ -30,7 +30,7 @@ interface FaqItem {
             [stagger]="0.04"
             class="headline text-[clamp(2.25rem,4.5vw,3.5rem)] text-ink"
           >
-            Înainte să <em class="serif-accent">încerci</em>.
+            Înainte să încerci.
           </h2>
 
           <div>

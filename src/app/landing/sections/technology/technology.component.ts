@@ -29,7 +29,7 @@ interface TechRow {
           [stagger]="0.04"
           class="headline mt-16 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] text-ink"
         >
-          Construit ca un instrument <em class="serif-accent">medical</em>.
+          Construit ca un instrument medical.
         </h2>
 
         <ul class="mt-20">

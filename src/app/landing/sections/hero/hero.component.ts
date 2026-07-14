@@ -14,9 +14,9 @@ import { ScrollService } from '../../../core/scroll.service';
 import { MagneticDirective } from '../../../shared/directives/magnetic.directive';
 
 /**
- * Purely typographic opening: two masked headline lines rise on load,
- * then the deck, actions and fact row follow. On scroll the whole
- * composition drifts up slightly slower than the page and fades.
+ * Centered, single-column opening. One statement, one action, one quiet
+ * line of reassurance — no rules, no panels, whitespace does the layout.
+ * Masked headline lines rise on load; the block drifts softly on exit.
  */
 @Component({
   selector: 'app-hero',
@@ -26,64 +26,52 @@ import { MagneticDirective } from '../../../shared/directives/magnetic.directive
     <section
       #wrap
       id="top"
-      class="relative flex min-h-svh flex-col justify-between overflow-hidden bg-base pt-32 pb-10"
+      class="relative flex min-h-svh flex-col overflow-hidden bg-base"
     >
-      <!-- One quiet pool of light. Nothing else decorates this screen. -->
       <div
-        aria-hidden="true"
-        class="pointer-events-none absolute -top-[30%] left-1/2 h-[80vh] w-[120vw] -translate-x-1/2 rounded-full opacity-60"
-        style="background: radial-gradient(closest-side, rgba(0, 113, 227, 0.07), transparent 70%)"
-      ></div>
-
-      <div #content class="container-edit relative flex flex-1 flex-col justify-center">
+        #content
+        class="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 pb-20 pt-32 text-center"
+      >
         <p class="mask-line index-label">
           <span #intro>Screening dermatologic asistat de AI</span>
         </p>
 
-        <h1 class="display mt-8 text-[clamp(3.25rem,9vw,7.5rem)] text-ink">
+        <h1 class="display mt-9 text-[clamp(3rem,7.5vw,5.75rem)] text-ink">
           <span class="mask-line"><span #line1>O fotografie.</span></span>
-          <span class="mask-line"><span #line2>Un răspuns <em class="serif-accent">clar</em>.</span></span>
+          <span class="mask-line"><span #line2>Mai multă claritate.</span></span>
         </h1>
 
-        <div #deck class="mt-10 flex max-w-xl flex-col gap-10">
-          <p class="text-pretty text-lg leading-relaxed text-ink/60 sm:text-xl">
+        <div #deck class="flex flex-col items-center">
+          <p class="mt-8 max-w-[26rem] text-pretty text-[1.0625rem] leading-[1.7] text-ink/55 sm:max-w-[30rem] sm:text-lg">
             SkinAlert analizează alunițele cu un model antrenat pe peste 15.000 de imagini
-            medicale și îți spune în câteva secunde dacă merită văzute de un medic.
+            medicale și îți spune dacă merită văzute de un medic.
           </p>
 
-          <div class="flex flex-wrap items-center gap-6">
-            <a
-              href="#analyzer"
-              (click)="go($event, '#analyzer')"
-              appMagnetic
-              class="btn-pill inline-flex px-8 py-4 text-base"
-            >
-              <span class="btn-label">
-                <span>Analizează o fotografie</span>
-                <span aria-hidden="true">Analizează o fotografie</span>
-              </span>
-            </a>
-            <a
-              href="#how-it-works"
-              (click)="go($event, '#how-it-works')"
-              class="link-draw text-base font-medium text-ink/70 hover:text-ink"
-            >
-              Cum funcționează
-            </a>
-          </div>
-        </div>
-      </div>
+          <a
+            href="#upload"
+            (click)="go($event, '#upload')"
+            appMagnetic
+            [strength]="0.2"
+            class="btn-pill mt-12 inline-flex px-8 py-4 text-base shadow-[0_16px_40px_-16px_rgba(29,29,31,0.55)]"
+          >
+            <span class="btn-label">
+              <span>Analizează o fotografie</span>
+              <span aria-hidden="true">Analizează o fotografie</span>
+            </span>
+          </a>
 
-      <!-- Fact row: three plain truths, hairline above. -->
-      <div #facts class="container-edit relative">
-        <dl class="rule grid grid-cols-1 gap-x-10 gap-y-4 pt-6 sm:grid-cols-3">
-          @for (fact of factRow; track fact.term) {
-            <div class="flex items-baseline justify-between gap-4 sm:block">
-              <dt class="text-sm text-ink/45">{{ fact.term }}</dt>
-              <dd class="text-sm font-medium text-ink sm:mt-1">{{ fact.detail }}</dd>
-            </div>
-          }
-        </dl>
+          <a
+            href="#how-it-works"
+            (click)="go($event, '#how-it-works')"
+            class="link-draw mt-7 text-sm font-medium text-ink/45 hover:text-ink"
+          >
+            Cum funcționează
+          </a>
+        </div>
+
+        <p #reassure class="mt-16 text-[0.8125rem] leading-relaxed text-ink/35">
+          Fără cont&ensp;·&ensp;Gratuit&ensp;·&ensp;Fotografia nu e salvată
+        </p>
       </div>
     </section>
   `,
@@ -99,16 +87,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly line1 = viewChild.required<ElementRef<HTMLElement>>('line1');
   private readonly line2 = viewChild.required<ElementRef<HTMLElement>>('line2');
   private readonly deck = viewChild.required<ElementRef<HTMLElement>>('deck');
-  private readonly facts = viewChild.required<ElementRef<HTMLElement>>('facts');
+  private readonly reassure = viewChild.required<ElementRef<HTMLElement>>('reassure');
 
   private entrance?: gsap.core.Timeline;
   private exit?: gsap.core.Timeline;
-
-  readonly factRow = [
-    { term: 'Fără cont', detail: 'Încarci și primești rezultatul' },
-    { term: 'Timp de analiză', detail: 'Sub două secunde' },
-    { term: 'Confidențialitate', detail: 'Fotografia nu e salvată după analiză' },
-  ];
 
   ngAfterViewInit(): void {
     if (this.motion.reducedMotion()) {
@@ -123,10 +105,10 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         .from(this.line2().nativeElement, { yPercent: 115, duration: 1.4 }, 0.34)
         .from(
           this.deck().nativeElement.children,
-          { y: 28, autoAlpha: 0, duration: 1.1, stagger: 0.12 },
+          { y: 24, autoAlpha: 0, duration: 1.1, stagger: 0.12 },
           0.7,
         )
-        .from(this.facts().nativeElement, { autoAlpha: 0, duration: 1.2 }, 1.05);
+        .from(this.reassure().nativeElement, { autoAlpha: 0, duration: 1.2 }, 1.1);
 
       this.exit = gsap
         .timeline({

@@ -21,7 +21,7 @@ import { MagneticDirective } from '../../../shared/directives/magnetic.directive
           [stagger]="0.05"
           class="display max-w-4xl text-[clamp(2.75rem,7vw,6rem)] text-base"
         >
-          Ai o aluniță care te <em class="serif-accent">preocupă</em>?
+          Ai o aluniță care te preocupă?
         </h2>
 
         <p appReveal mode="fade" [delay]="0.25" class="mt-8 max-w-md text-lg text-base/60">
@@ -32,7 +32,7 @@ import { MagneticDirective } from '../../../shared/directives/magnetic.directive
           appReveal
           mode="scale"
           [delay]="0.4"
-          href="#analyzer"
+          href="#upload"
           (click)="go($event)"
           appMagnetic
           [strength]="0.3"
@@ -58,6 +58,6 @@ export class CtaComponent {
 
   go(event: Event): void {
     event.preventDefault();
-    this.scroll.scrollTo('#analyzer');
+    this.scroll.scrollTo('#upload');
   }
 }

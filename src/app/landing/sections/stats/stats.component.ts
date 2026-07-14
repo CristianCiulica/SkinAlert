@@ -44,7 +44,7 @@ interface Stat {
           [stagger]="0.04"
           class="headline mt-16 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] text-ink"
         >
-          Cât este modelul de <em class="serif-accent">precis</em>?
+          Cât este modelul de precis?
         </h2>
 
         <div class="mt-20 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">

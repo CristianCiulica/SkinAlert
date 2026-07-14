@@ -43,8 +43,8 @@ import { ScrollService } from '../../../core/scroll.service';
             <h3 class="text-xs font-medium uppercase tracking-[0.14em] text-base/35">Contact</h3>
             <ul class="mt-5 space-y-3">
               <li>
-                <a href="mailto:hello@skinalert.app" class="link-draw text-sm text-base/60 hover:text-base">
-                  hello&#64;skinalert.app
+                <a href="mailto:cristianciulica2024@gmail.com" class="link-draw text-sm text-base/60 hover:text-base">
+                  cristianciulica2024&#64;gmail.com
                 </a>
               </li>
             </ul>

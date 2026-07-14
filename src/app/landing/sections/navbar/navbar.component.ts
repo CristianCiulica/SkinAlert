@@ -22,11 +22,10 @@ interface NavLink {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header
-      class="fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,backdrop-filter] duration-500"
+      class="fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,backdrop-filter,box-shadow] duration-300 ease-out"
       [class]="hidden() ? '-translate-y-full' : 'translate-y-0'"
-      [style.background]="scrolled() ? 'rgba(251,251,253,0.82)' : 'transparent'"
-      [style.backdropFilter]="scrolled() ? 'blur(20px) saturate(1.6)' : 'none'"
-      [style.borderBottom]="scrolled() ? '1px solid rgba(29,29,31,0.08)' : '1px solid transparent'"
+      [class.liquid-glass]="glassy()"
+      [style.borderBottom]="glassy() ? '1px solid rgba(29,29,31,0.08)' : '1px solid transparent'"
     >
       <nav class="container-edit flex h-16 items-center justify-between" aria-label="Navigație principală">
         <a
@@ -54,8 +53,8 @@ interface NavLink {
 
         <div class="flex items-center gap-3">
           <a
-            href="#analyzer"
-            (click)="go($event, '#analyzer')"
+            href="#upload"
+            (click)="go($event, '#upload')"
             class="btn-pill hidden items-center justify-center px-5 py-2 text-sm lg:inline-flex"
           >
             <span class="btn-label">
@@ -85,10 +84,7 @@ interface NavLink {
       </nav>
 
       @if (menuOpen()) {
-        <div
-          id="mobile-menu"
-          class="border-t border-ink/8 bg-base/95 px-6 pb-8 pt-4 backdrop-blur-xl lg:hidden"
-        >
+        <div id="mobile-menu" class="animate-menu-slide-down border-t border-ink/8 px-6 pb-8 pt-4 lg:hidden">
           <ul class="flex flex-col">
             @for (link of links; track link.anchor) {
               <li class="rule first:border-t-0">
@@ -101,15 +97,6 @@ interface NavLink {
                 </a>
               </li>
             }
-            <li class="mt-6">
-              <a
-                href="#analyzer"
-                (click)="go($event, '#analyzer')"
-                class="btn-pill inline-flex w-full px-6 py-4 text-base"
-              >
-                Analizează o fotografie
-              </a>
-            </li>
           </ul>
         </div>
       }
@@ -130,6 +117,8 @@ export class NavbarComponent {
   readonly menuOpen = signal(false);
 
   readonly scrolled = computed(() => this.scroll.scrollY() > 24);
+  /** Glass surface when the page is scrolled or the dropdown is open. */
+  readonly glassy = computed(() => this.scrolled() || this.menuOpen());
   readonly hidden = computed(
     () => !this.menuOpen() && this.scroll.direction() === 1 && this.scroll.scrollY() > 480,
   );

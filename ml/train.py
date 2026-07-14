@@ -15,10 +15,7 @@ HERE = Path(__file__).parent
 DATA_DIR = HERE / "data_xdomain"
 OUT_DIR = HERE / "artifacts"
 
-
 class RandomJPEG:
-    """Recomprimă imaginea ca JPEG cu calitate variabilă — simulează artefactele
-    de compresie ale pozelor de pe telefon/WhatsApp."""
 
     def __init__(self, p: float = 0.4, q_range=(30, 75)):
         self.p, self.q_range = p, q_range
@@ -31,10 +28,7 @@ class RandomJPEG:
         buf.seek(0)
         return Image.open(buf).convert("RGB")
 
-
 class RandomDownscale:
-    """Reduce rezoluția apoi o mărește la loc — simulează poze de telefon mici
-    sau făcute de la distanță."""
 
     def __init__(self, p: float = 0.3, min_scale: float = 0.4):
         self.p, self.min_scale = p, min_scale
@@ -52,7 +46,6 @@ LABEL_SMOOTH = 0.05
 
 MEAN = [0.485, 0.456, 0.406]
 STD = [0.229, 0.224, 0.225]
-
 
 def build_transforms():
     train_tf = transforms.Compose([
@@ -78,7 +71,6 @@ def build_transforms():
     ])
     return train_tf, eval_tf
 
-
 def make_loaders(batch_size: int):
     train_tf, eval_tf = build_transforms()
     train_ds = datasets.ImageFolder(DATA_DIR / "train", transform=train_tf)
@@ -96,27 +88,22 @@ def make_loaders(batch_size: int):
     test_loader = DataLoader(test_ds, batch_size=batch_size, num_workers=6)
     return train_loader, val_loader, test_loader, class_count
 
-
 def build_model() -> nn.Module:
     model = models.efficientnet_b3(weights=models.EfficientNet_B3_Weights.IMAGENET1K_V1)
     in_feat = model.classifier[1].in_features
     model.classifier[1] = nn.Linear(in_feat, 1)
     return model
 
-
 def set_backbone_trainable(model: nn.Module, trainable: bool) -> None:
     for name, p in model.named_parameters():
         if not name.startswith("classifier"):
             p.requires_grad = trainable
-
-
 
 def _tta_views(x: torch.Tensor):
     yield x
     yield torch.flip(x, dims=[3])
     yield torch.flip(x, dims=[2])
     yield torch.rot90(x, k=1, dims=[2, 3])
-
 
 @torch.no_grad()
 def evaluate(model, loader, device, tta: bool = True):
@@ -138,7 +125,6 @@ def evaluate(model, loader, device, tta: bool = True):
     spec = tn / (tn + fp) if (tn + fp) else 0.0
     acc = (tp + tn) / len(labels)
     return {"auc": auc, "acc": acc, "sensitivity": sens, "specificity": spec}
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -164,7 +150,6 @@ def main() -> None:
     OUT_DIR.mkdir(exist_ok=True)
     best_auc = -1.0
     best_path = OUT_DIR / f"model_{args.tag}.pt"
-
 
     set_backbone_trainable(model, False)
     optimizer = torch.optim.AdamW(
@@ -207,7 +192,6 @@ def main() -> None:
             best_auc = val["auc"]
             torch.save(model.state_dict(), best_path)
 
-
     (OUT_DIR / "config.json").write_text(
         json.dumps({"arch": "efficientnet_b3", "img_size": IMG_SIZE, "classes": CLASS_NAMES})
     )
@@ -220,7 +204,6 @@ def main() -> None:
     (OUT_DIR / f"metrics_{args.tag}.json").write_text(
         json.dumps({"val_best_auc": best_auc, "test": test}, indent=2)
     )
-
 
 if __name__ == "__main__":
     main()

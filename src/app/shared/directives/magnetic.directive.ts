@@ -10,11 +10,7 @@ import {
 import { gsap } from '../../core/gsap';
 import { MotionService } from '../../core/motion.service';
 
-/**
- * Magnetic hover: the host drifts gently toward the cursor and settles
- * back with an elastic release. Pointer-only (skipped on touch and
- * under reduced motion). Keep strength subtle — 0.2–0.35.
- */
+
 @Directive({ selector: '[appMagnetic]' })
 export class MagneticDirective implements AfterViewInit, OnDestroy {
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);

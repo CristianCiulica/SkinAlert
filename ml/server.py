@@ -1,15 +1,3 @@
-"""API de inferență FastAPI pentru clasificarea leziunilor cutanate.
-
-Pipeline complet, robust la poze de telefon:
-  1. Poartă de calitate — respinge pozele neclare/întunecate cu mesaje utile.
-  2. Preprocesare — îndepărtare păr + constanță de culoare (identic cu antrenarea).
-  3. Ansamblu B3 + TTA — media logit-urilor peste modele × augmentări.
-  4. Calibrare — temperature scaling (probabilități oneste).
-
-Rulare:
-    uvicorn server:app --host 0.0.0.0 --port 8000
-"""
-
 from __future__ import annotations
 
 import glob
@@ -46,12 +34,10 @@ transform = transforms.Compose([
     transforms.Normalize(MEAN, STD),
 ])
 
-
 def _build(arch: str) -> nn.Module:
     m = getattr(models, arch)(weights=None)
     m.classifier[1] = nn.Linear(m.classifier[1].in_features, 1)
     return m
-
 
 def load_ensemble() -> list[nn.Module]:
     paths = sorted(glob.glob(str(ARTIFACTS / "model_*.pt")))
@@ -65,10 +51,8 @@ def load_ensemble() -> list[nn.Module]:
         ens.append(m)
     return ens
 
-
 def _tta(x: torch.Tensor):
     return [x, torch.flip(x, dims=[3]), torch.flip(x, dims=[2]), torch.rot90(x, 1, dims=[2, 3])]
-
 
 app = FastAPI(title="SkinAlert Inference API")
 app.add_middleware(
@@ -80,13 +64,11 @@ app.add_middleware(
 
 _ensemble: list[nn.Module] | None = None
 
-
 def get_ensemble() -> list[nn.Module]:
     global _ensemble
     if _ensemble is None:
         _ensemble = load_ensemble()
     return _ensemble
-
 
 @app.get("/api/health")
 def health() -> dict:
@@ -96,7 +78,6 @@ def health() -> dict:
         "device": device, "models": n, "arch": ARCH,
         "threshold": DECISION_THRESHOLD, "temperature": TEMPERATURE,
     }
-
 
 @app.post("/api/analyze")
 async def analyze(image: UploadFile = File(...)) -> dict:
@@ -108,7 +89,6 @@ async def analyze(image: UploadFile = File(...)) -> dict:
     except Exception:
         raise HTTPException(400, "Nu am putut citi imaginea.")
 
-
     q = assess(img)
     if not q.ok:
         return {
@@ -119,9 +99,7 @@ async def analyze(image: UploadFile = File(...)) -> dict:
             "disclaimer": "Acest rezultat este orientativ și NU constituie un diagnostic medical.",
         }
 
-
     proc = pp.apply(img)
-
 
     x = transform(proc).unsqueeze(0).to(device)
     with torch.no_grad():
@@ -150,7 +128,6 @@ async def analyze(image: UploadFile = File(...)) -> dict:
         ),
         "disclaimer": "Acest rezultat este orientativ și NU constituie un diagnostic medical.",
     }
-
 
 if __name__ == "__main__":
     import uvicorn

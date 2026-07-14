@@ -1,15 +1,3 @@
-"""Poartă de calitate a imaginii — filtrează pozele nepotrivite ÎNAINTE de model,
-ca să nu dăm predicții pe input de proastă calitate.
-
-Verifică: claritate (blur), luminozitate și contrast. Toate metricile se
-calculează pe imaginea redimensionată la 300x300 (invariant la rezoluție și
-identic cu intrarea modelului). Pragurile sunt setate sub percentila 1-3 a
-imaginilor bune (dermatoscopice + clinice ISIC), deci poarta respinge doar
-pozele clar problematice — nu cazurile de graniță (evităm respingeri false).
-
-Verdictul vine cu mesaje acționabile în română.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -25,18 +13,15 @@ DARK_MIN = 55.0
 BRIGHT_MAX = 242.0                            
 CONTRAST_MIN = 8.0                                                             
 
-
 @dataclass
 class QualityReport:
     ok: bool
     issues: list[str] = field(default_factory=list)
     metrics: dict = field(default_factory=dict)
 
-
 def _gray_300(img: Image.Image) -> np.ndarray:
     im = img.convert("RGB").resize((WORK_SIZE, WORK_SIZE))
     return cv2.cvtColor(np.array(im), cv2.COLOR_RGB2GRAY)
-
 
 def assess(img: Image.Image) -> QualityReport:
     gray = _gray_300(img)
@@ -60,7 +45,6 @@ def assess(img: Image.Image) -> QualityReport:
         issues.append("Cadrul are prea puțin detaliu. Apropie-te și încadrează clar leziunea.")
 
     return QualityReport(ok=len(issues) == 0, issues=issues, metrics=metrics)
-
 
 if __name__ == "__main__":
     import sys

@@ -1,13 +1,3 @@
-"""Descarcă subsetul CLINIC (cameră reală, non-dermatoscopic) din ISIC Archive.
-
-Aceste imagini sunt mai apropiate de pozele de telefon decât cele dermatoscopice.
-Se salvează separat în data_clinical/{benign,malignant}/ (fără split — splitul
-pe pacient/domeniu se face ulterior în build_dataset.py).
-
-Rulare:
-    python download_clinical.py --per-class 4500
-"""
-
 import argparse
 import concurrent.futures as cf
 import time
@@ -21,7 +11,6 @@ CLASSES = {
     "benign": "image_type:clinical AND diagnosis_1:Benign",
     "malignant": "image_type:clinical AND diagnosis_1:Malignant",
 }
-
 
 def fetch_list(query: str, target: int) -> list[dict]:
     out, url, params = [], API, {"query": query, "limit": 100}
@@ -37,7 +26,6 @@ def fetch_list(query: str, target: int) -> list[dict]:
         time.sleep(0.15)
     return out[:target]
 
-
 def dl(item: dict, dest: Path) -> bool:
     path = dest / f"{item['id']}.jpg"
     if path.exists():
@@ -50,7 +38,6 @@ def dl(item: dict, dest: Path) -> bool:
     except Exception as e:                
         print(f"  ! {item['id']}: {e}")
         return False
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -69,7 +56,6 @@ def main() -> None:
                 ok += bool(r)
         print(f"=== {cls}: {ok}/{len(items)} salvate în {dest}")
     print("Gata clinical.")
-
 
 if __name__ == "__main__":
     main()

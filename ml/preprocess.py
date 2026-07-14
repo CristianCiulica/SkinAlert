@@ -1,24 +1,10 @@
-"""Preprocesare robustă pentru poze de telefon, aplicată identic la antrenare
-și la inferență (altfel apare train/serve skew).
-
-1. Constanță de culoare (Shades-of-Gray, Minkowski p=6) — neutralizează
-   dominanta de culoare a iluminării (bec cald, umbră albăstruie etc.), astfel
-   încât aceeași leziune să arate la fel indiferent de lumina din cameră.
-2. Îndepărtare fire de păr (DullRazor) — firele de păr peste leziune încurcă
-   modelul; le detectăm morfologic și le "vindecăm" prin inpainting.
-
-Ambele sunt operații ușoare, deterministe. `apply(pil)` întoarce un PIL.Image.
-"""
-
 from __future__ import annotations
 
 import cv2
 import numpy as np
 from PIL import Image
 
-
 def shades_of_gray(bgr: np.ndarray, power: int = 6) -> np.ndarray:
-    """Constanță de culoare Shades-of-Gray."""
     img = bgr.astype(np.float32)
     flat = img.reshape(-1, 3)
 
@@ -28,9 +14,7 @@ def shades_of_gray(bgr: np.ndarray, power: int = 6) -> np.ndarray:
     out = img * gain.reshape(1, 1, 3)
     return np.clip(out, 0, 255).astype(np.uint8)
 
-
 def remove_hair(bgr: np.ndarray) -> np.ndarray:
-    """DullRazor: detectează firele de păr întunecate și le inpaint-uiește."""
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
@@ -41,13 +25,10 @@ def remove_hair(bgr: np.ndarray) -> np.ndarray:
     mask = cv2.dilate(mask, np.ones((3, 3), np.uint8), iterations=1)
     return cv2.inpaint(bgr, mask, 1, cv2.INPAINT_TELEA)
 
-
 def apply(
     img: Image.Image, do_hair: bool = True, do_color: bool = True, max_size: int = 384
 ) -> Image.Image:
     img = img.convert("RGB")
-
-
 
     if max_size and max(img.size) > max_size:
         scale = max_size / max(img.size)
@@ -59,7 +40,6 @@ def apply(
         bgr = shades_of_gray(bgr)
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
     return Image.fromarray(rgb)
-
 
 if __name__ == "__main__":
     import sys

@@ -1,22 +1,3 @@
-"""Construiește datasetul CROSS-DOMENIU pentru robustețe la poze de telefon.
-
-Reunește trei surse și le preprocesează identic (păr + culoare), scriind
-rezultatul în data_xdomain/{train,val,test}/{benign,malignant}/ plus un
-manifest.csv cu domeniul fiecărei imagini (pentru evaluare pe domenii).
-
-Surse:
-  - dermatoscopic : data/{split}/{cls}/            (deja împărțit)
-  - clinic (ISIC) : data_clinical/{cls}/           (split determinist pe hash)
-  - telefon (PAD) : data_phone/images/ + pad_metadata.csv   (OPȚIONAL, split pe pacient)
-
-PAD-UFES-20 mapping binar:
-  malignant = BCC, MEL, SCC   |   benign = ACK, NEV, SEK
-  (ACK = keratoză actinică, pre-malignă, grupată la benign prin convenție)
-
-Rulare:
-    python build_dataset.py --workers 8
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -35,9 +16,7 @@ SPLITS = ("train", "val", "test")
 PAD_MALIGNANT = {"BCC", "MEL", "SCC"}
 PAD_BENIGN = {"ACK", "NEV", "SEK"}
 
-
 def split_for(key: str) -> str:
-    """Split determinist 70/15/15 pe baza hash-ului cheii (stabil între rulări)."""
     h = int(hashlib.md5(key.encode()).hexdigest(), 16) % 100
     if h < 70:
         return "train"
@@ -45,9 +24,7 @@ def split_for(key: str) -> str:
         return "val"
     return "test"
 
-
 def collect_dermato() -> list[tuple[Path, str, str, str]]:
-    """(path, cls, split, domain) — dermatoscopic păstrează splitul existent."""
     items = []
     for split in SPLITS:
         for cls in ("benign", "malignant"):
@@ -56,7 +33,6 @@ def collect_dermato() -> list[tuple[Path, str, str, str]]:
                 for p in d.glob("*.jpg"):
                     items.append((p, cls, split, "dermato"))
     return items
-
 
 def collect_clinical() -> list[tuple[Path, str, str, str]]:
     items = []
@@ -67,9 +43,7 @@ def collect_clinical() -> list[tuple[Path, str, str, str]]:
                 items.append((p, cls, split_for("clin_" + p.stem), "clinic"))
     return items
 
-
 def collect_phone() -> list[tuple[Path, str, str, str]]:
-    """PAD-UFES-20, dacă e prezent: split pe PACIENT (fără leakage)."""
     meta = HERE / "pad_metadata.csv"
     imgdir = HERE / "data_phone" / "images"
     if not (meta.exists() and imgdir.exists()):
@@ -87,7 +61,6 @@ def collect_phone() -> list[tuple[Path, str, str, str]]:
                 items.append((img, cls, split_for("pat_" + row["patient_id"]), "telefon"))
     return items
 
-
 def process_one(item) -> tuple[str, str, str] | None:
     src, cls, split, domain = item
     dst_dir = OUT / split / cls
@@ -102,7 +75,6 @@ def process_one(item) -> tuple[str, str, str] | None:
     except Exception as e:                
         print(f"  ! {src.name}: {e}")
         return None
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -129,7 +101,6 @@ def main() -> None:
                     if done % 2000 == 0:
                         print(f"  procesate {done}/{len(items)}")
 
-
     print(f"\nProcesate: {done}")
     for split in SPLITS:
         for cls in ("benign", "malignant"):
@@ -137,7 +108,6 @@ def main() -> None:
             n = len(list(d.glob("*.png"))) if d.exists() else 0
             print(f"  {split}/{cls}: {n}")
     print(f"\nManifest: {manifest}")
-
 
 if __name__ == "__main__":
     main()

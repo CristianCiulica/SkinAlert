@@ -1,12 +1,3 @@
-"""Descarcă imagini de la ISIC Archive și le împarte în train/val/test.
-
-Două clase: benign vs malignant (după câmpul diagnosis_1).
-Toate imaginile din ISIC sunt licențiate CC-0.
-
-Rulare:
-    python download_data.py --per-class 1500
-"""
-
 import argparse
 import concurrent.futures as cf
 import random
@@ -20,9 +11,7 @@ DATA_DIR = Path(__file__).parent / "data"
 SPLITS = {"train": 0.7, "val": 0.15, "test": 0.15}
 CLASSES = {"benign": "diagnosis_1:Benign", "malignant": "diagnosis_1:Malignant"}
 
-
 def fetch_image_list(query: str, target: int) -> list[dict]:
-    """Parcurge paginarea până strânge `target` intrări cu URL 'full'."""
     out: list[dict] = []
     url = API
     params = {"query": query, "limit": 100}
@@ -39,7 +28,6 @@ def fetch_image_list(query: str, target: int) -> list[dict]:
         time.sleep(0.2)
     return out[:target]
 
-
 def download_one(item: dict, dest: Path) -> bool:
     path = dest / f"{item['isic_id']}.jpg"
     if path.exists():
@@ -53,7 +41,6 @@ def download_one(item: dict, dest: Path) -> bool:
         print(f"  ! eșec {item['isic_id']}: {e}")
         return False
 
-
 def split_items(items: list[dict]) -> dict[str, list[dict]]:
     random.shuffle(items)
     n = len(items)
@@ -64,7 +51,6 @@ def split_items(items: list[dict]) -> dict[str, list[dict]]:
         "val": items[n_train : n_train + n_val],
         "test": items[n_train + n_val :],
     }
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -89,7 +75,6 @@ def main() -> None:
             print(f"  {split}: {ok}/{len(split_items_)} salvate în {dest}")
 
     print("\nGata. Structura datasetului este în ml/data/{train,val,test}/{benign,malignant}/")
-
 
 if __name__ == "__main__":
     main()

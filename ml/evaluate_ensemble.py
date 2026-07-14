@@ -1,15 +1,3 @@
-"""Evaluează ansamblul cross-domeniu cu TTA, îl CALIBREAZĂ (temperature scaling)
-și raportează metrici PE FIECARE DOMENIU (dermatoscopic / clinic / telefon).
-
-- Predicția ansamblului = media LOGIT-urilor peste modele × 4 augmentări TTA.
-- Temperatura T se fitează pe validare (minimizează BCE) → probabilități calibrate.
-- Pragul de decizie se alege pe validare (favorizează sensibilitatea).
-- Raportul final e pe test, defalcat pe domenii (folosind manifest.csv).
-
-Rulare:
-    python evaluate_ensemble.py
-"""
-
 import csv
 import glob
 import json
@@ -37,7 +25,6 @@ eval_tf = transforms.Compose([
     transforms.Normalize(MEAN, STD),
 ])
 
-
 def load_models():
     paths = sorted(glob.glob(str(OUT_DIR / "model_*.pt")))
     ms = []
@@ -50,13 +37,10 @@ def load_models():
     print(f"Ansamblu: {len(ms)} modele")
     return ms
 
-
 def _tta(x):
     return [x, torch.flip(x, dims=[3]), torch.flip(x, dims=[2]), torch.rot90(x, 1, dims=[2, 3])]
 
-
 def domain_map():
-    """path relativ (nume fișier) -> domeniu, din manifest.csv."""
     m = {}
     mf = DATA_DIR / "manifest.csv"
     if mf.exists():
@@ -65,10 +49,8 @@ def domain_map():
                 m[Path(row["path"]).name] = row["domain"]
     return m
 
-
 @torch.no_grad()
 def predict_logits(ms, split):
-    """Întoarce (mean_logits, labels, domains) — logit mediat peste modele×TTA."""
     ds = datasets.ImageFolder(DATA_DIR / split, transform=eval_tf)
     assert ds.classes == ["benign", "malignant"], ds.classes
     loader = DataLoader(ds, batch_size=16, num_workers=6)
@@ -88,9 +70,7 @@ def predict_logits(ms, split):
         labels.extend(y.tolist())
     return torch.tensor(logits), torch.tensor(labels, dtype=torch.float), domains_by_idx
 
-
 def fit_temperature(logits, labels):
-    """Fitează un singur scalar T > 0 care minimizează BCE pe validare."""
     T = torch.nn.Parameter(torch.ones(1))
     opt = torch.optim.LBFGS([T], lr=0.05, max_iter=100)
     bce = nn.BCEWithLogitsLoss()
@@ -104,7 +84,6 @@ def fit_temperature(logits, labels):
     opt.step(closure)
     return float(T.detach().clamp(min=1e-2).item())
 
-
 def metrics_at(probs, labels, thr):
     preds = [1 if p >= thr else 0 for p in probs]
     tn, fp, fn, tp = confusion_matrix(labels, preds, labels=[0, 1]).ravel()
@@ -112,7 +91,6 @@ def metrics_at(probs, labels, thr):
     spec = tn / (tn + fp) if (tn + fp) else 0.0
     acc = (tp + tn) / len(labels)
     return {"acc": round(acc, 4), "sensitivity": round(sens, 4), "specificity": round(spec, 4), "n": len(labels)}
-
 
 def main():
     ms = load_models()
@@ -160,7 +138,6 @@ def main():
         "test_auc": test_auc, "overall": overall, "per_domain": per_domain,
     }, indent=2))
     print(f"\nSalvat: config.json (prag {best_thr:.2f}, T {T:.3f}) + metrics_xdomain.json")
-
 
 if __name__ == "__main__":
     main()

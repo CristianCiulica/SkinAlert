@@ -1,0 +1,1 @@
+{"arch": "efficientnet_b3", "img_size": 300, "classes": ["benign", "malignant"], "threshold": 0.23, "temperature": 0.7873}

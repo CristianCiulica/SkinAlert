@@ -45,6 +45,10 @@ Thumbs.db
 # ML pipeline
 ml/.venv/
 ml/data/
-ml/artifacts/*.pt
+ml/data_clinical/
+ml/data_xdomain/
+ml/artifacts_dermato/
+ml/pad_metadata.csv
 ml/artifacts_train.log
 ml/__pycache__/
+*.log

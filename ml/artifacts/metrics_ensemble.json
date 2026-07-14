@@ -1,0 +1,15 @@
+{
+  "val_auc": 0.9963888888888889,
+  "threshold": 0.38,
+  "test_auc": 0.9956944444444444,
+  "test_default": {
+    "acc": 0.9733333333333334,
+    "sensitivity": 0.975,
+    "specificity": 0.9716666666666667
+  },
+  "test_tuned": {
+    "acc": 0.9733333333333334,
+    "sensitivity": 0.985,
+    "specificity": 0.9616666666666667
+  }
+}

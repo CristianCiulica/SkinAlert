@@ -101,16 +101,23 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
                   <div class="absolute inset-0 bg-ink/20"></div>
                   <div class="scan-sweep" aria-hidden="true"></div>
                 }
-                <button
-                  type="button"
-                  (click)="reset()"
-                  class="btn-pill absolute bottom-5 left-1/2 inline-flex -translate-x-1/2 whitespace-nowrap px-6 py-3 text-sm"
-                >
-                  <span class="btn-label">
-                    <span>Altă fotografie</span>
-                    <span aria-hidden="true">Altă fotografie</span>
-                  </span>
-                </button>
+<!-- Wrapper owns the absolute placement; .btn-pill keeps its own
+                     position:relative for the label-slide animation. (In Tailwind v4
+                     the unlayered .btn-pill wins over the "absolute" utility, so the
+                     button element itself cannot be positioned directly.) -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center">
+                  <button
+                    type="button"
+                    (click)="reset()"
+                    class="btn-pill pointer-events-auto inline-flex whitespace-nowrap px-6 py-3 text-sm"
+                    style="box-shadow: 0 0 0 1px rgba(255,255,255,0.18), 0 10px 28px -8px rgba(0,0,0,0.55)"
+                  >
+                    <span class="btn-label">
+                      <span>Altă fotografie</span>
+                      <span aria-hidden="true">Altă fotografie</span>
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div

@@ -93,7 +93,7 @@ export class FaqComponent {
     {
       question: 'Ce se întâmplă cu fotografiile mele?',
       answer:
-        'Fotografia e trimisă serverului de analiză, procesată în memorie și nu e salvată nicăieri. Nu există cont, deci nu păstrăm nimic despre tine după ce primești rezultatul.',
+        'Fotografia nu părăsește niciodată dispozitivul tău — analiza rulează complet în browser (modelul AI se descarcă local, o singură dată). Nu există server, cont sau upload, deci nu avem cum să vedem ori să stocăm ceva.',
     },
     {
       question: 'Ce fel de fotografii funcționează cel mai bine?',

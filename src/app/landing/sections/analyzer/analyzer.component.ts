@@ -128,10 +128,17 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
                 @if (loading()) {
                   <div class="flex items-center gap-3 text-ink">
                     <span class="pulse-dot" aria-hidden="true"></span>
-                    <span class="text-sm font-medium uppercase tracking-[0.14em]">Analizăm</span>
+                    <span class="text-sm font-medium uppercase tracking-[0.14em]">{{
+                      phase() === 'downloading' ? 'Se pregătește' : 'Analizăm'
+                    }}</span>
                   </div>
-                  <p class="headline mt-6 text-3xl text-ink">Citim fiecare detaliu al imaginii.</p>
-                  <p class="mt-4 text-base text-ink/50">Durează câteva secunde.</p>
+                  @if (phase() === 'downloading') {
+                    <p class="headline mt-6 text-3xl text-ink">Pregătim modelul AI pe dispozitivul tău.</p>
+                    <p class="mt-4 text-base text-ink/50">Se descarcă o singură dată (~45&nbsp;MB), apoi rămâne salvat în browser.</p>
+                  } @else {
+                    <p class="headline mt-6 text-3xl text-ink">Citim fiecare detaliu al imaginii.</p>
+                    <p class="mt-4 text-base text-ink/50">Totul rulează local — poza nu părăsește dispozitivul.</p>
+                  }
                 } @else if (error()) {
                   <p class="index-label text-danger" role="alert">Eroare</p>
                   <p class="headline mt-6 text-3xl text-ink">Nu am putut analiza fotografia.</p>
@@ -205,6 +212,8 @@ export class AnalyzerComponent {
   readonly error = signal<string | null>(null);
   readonly result = signal<AnalysisResult | null>(null);
   readonly dragOver = signal(false);
+  /** 'downloading' la prima analiză (aduce modelul), apoi 'running'. */
+  readonly phase = this.analyzer.phase;
 
   private readonly accepted = ['image/jpeg', 'image/png', 'image/webp'];
 

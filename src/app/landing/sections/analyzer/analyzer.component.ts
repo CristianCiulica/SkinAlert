@@ -134,7 +134,7 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
                   </div>
                   @if (phase() === 'downloading') {
                     <p class="headline mt-6 text-3xl text-ink">Pregătim modelul AI pe dispozitivul tău.</p>
-                    <p class="mt-4 text-base text-ink/50">Se descarcă o singură dată (~45&nbsp;MB), apoi rămâne salvat în browser.</p>
+                    <p class="mt-4 text-base text-ink/50">Se descarcă o singură dată (~70&nbsp;MB), apoi rămâne salvat în browser.</p>
                   } @else {
                     <p class="headline mt-6 text-3xl text-ink">Citim fiecare detaliu al imaginii.</p>
                     <p class="mt-4 text-base text-ink/50">Totul rulează local — poza nu părăsește dispozitivul.</p>

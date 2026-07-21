@@ -1,4 +1,9 @@
-"""Exportă ensemble-ul EfficientNet-B3 în ONNX pentru inferență în browser.
+"""Exportă ensemble-ul EfficientNet-B3 în ONNX fp16 pentru inferență în browser.
+
+Ambele modele sunt exportate (browserul rulează ensemble + TTA, identic cu
+serverul original). Greutățile sunt convertite la fp16 (jumătate de mărime,
+diferență de probabilitate măsurată ~3e-4), dar input/output rămân fp32
+(keep_io_types) ca JS-ul să lucreze cu Float32Array.
 
 Rulează: .venv/bin/python export_onnx.py
 Scrie fișierele în ../public/models/.
@@ -9,8 +14,10 @@ import glob
 import json
 from pathlib import Path
 
+import onnx
 import torch
 import torch.nn as nn
+from onnxconverter_common import float16
 from torchvision import models
 
 HERE = Path(__file__).parent
@@ -36,17 +43,21 @@ for i, p in enumerate(paths):
     m = build(ARCH)
     m.load_state_dict(torch.load(p, map_location="cpu"))
     m.eval()
-    out = OUT / f"model_{i}.onnx"
+
+    tmp = OUT / f"tmp_model_{i}.onnx"
     torch.onnx.export(
         m,
         dummy,
-        str(out),
+        str(tmp),
         input_names=["input"],
         output_names=["logit"],
         opset_version=17,
         dynamo=False,
     )
-    size_mb = out.stat().st_size / 1e6
-    print(f"exportat {out.name}: {size_mb:.1f} MB")
+    mdl16 = float16.convert_float_to_float16(onnx.load(str(tmp)), keep_io_types=True)
+    out = OUT / f"skin-model-{i}.fp16.onnx"
+    onnx.save(mdl16, str(out))
+    tmp.unlink()
+    print(f"exportat {out.name}: {out.stat().st_size / 1e6:.1f} MB")
 
 print("gata")

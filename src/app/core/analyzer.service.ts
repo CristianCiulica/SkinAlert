@@ -50,7 +50,8 @@ export class AnalyzerService {
   readonly phase = signal<AnalyzerPhase>('idle');
 
   private ort?: typeof Ort;
-  private session?: Ort.InferenceSession;
+  /** Ensemble complet, ca pe serverul original: 2 modele (fp16). */
+  private sessions: Ort.InferenceSession[] = [];
   // OpenCV.js nu are tipuri utile; îl tratăm ca `any`.
   private cv: any;
   private readyPromise?: Promise<void>;
@@ -97,7 +98,7 @@ export class AnalyzerService {
     }
   }
 
-  /** Încarcă (o singură dată) OpenCV.js, ONNX Runtime Web și sesiunea modelului. */
+  /** Încarcă (o singură dată) OpenCV.js, ONNX Runtime Web și ensemble-ul de modele. */
   private ensureReady(): Promise<void> {
     if (this.readyPromise) return this.readyPromise;
     this.phase.set('downloading');
@@ -114,9 +115,13 @@ export class AnalyzerService {
       ort.env.wasm.numThreads = 1; // fără SharedArrayBuffer => fără headere COOP/COEP
       ort.env.wasm.wasmPaths = new URL('ort/', document.baseURI).href;
 
-      this.session = await ort.InferenceSession.create(
-        new URL('models/skin-model.onnx', document.baseURI).href,
-        { executionProviders: ['wasm'], graphOptimizationLevel: 'all' },
+      this.sessions = await Promise.all(
+        [0, 1].map((i) =>
+          ort.InferenceSession.create(
+            new URL(`models/skin-model-${i}.fp16.onnx`, document.baseURI).href,
+            { executionProviders: ['wasm'], graphOptimizationLevel: 'all' },
+          ),
+        ),
       );
     })();
     return this.readyPromise;
@@ -275,14 +280,26 @@ export class AnalyzerService {
     }
   }
 
+  /**
+   * Ensemble + TTA, identic cu serverul original (server.py):
+   * 2 modele × 4 orientări (identitate, flip orizontal, flip vertical,
+   * rotire 90°), logit-urile mediate. 8 treceri în total.
+   */
   private async infer(input: Float32Array): Promise<number> {
     const ort = this.ort!;
-    const session = this.session!;
-    const tensor = new ort.Tensor('float32', input, [1, 3, IMG_SIZE, IMG_SIZE]);
-    const feeds: Record<string, Ort.Tensor> = { [session.inputNames[0]]: tensor };
-    const output = await session.run(feeds);
-    const logit = output[session.outputNames[0]].data as Float32Array;
-    return logit[0];
+    const variants = [input, flipW(input), flipH(input), rot90(input)];
+    let total = 0;
+    let n = 0;
+    for (const session of this.sessions) {
+      for (const v of variants) {
+        const tensor = new ort.Tensor('float32', v, [1, 3, IMG_SIZE, IMG_SIZE]);
+        const feeds: Record<string, Ort.Tensor> = { [session.inputNames[0]]: tensor };
+        const output = await session.run(feeds);
+        total += (output[session.outputNames[0]].data as Float32Array)[0];
+        n++;
+      }
+    }
+    return total / n;
   }
 }
 
@@ -299,6 +316,44 @@ function round(x: number, dp: number): number {
 
 function clamp255(v: number): number {
   return v < 0 ? 0 : v > 255 ? 255 : Math.round(v);
+}
+
+// ---- TTA pe tensor CHW pătrat (S×S), replici ale torch.flip/rot90 ----
+
+/** torch.flip(x, dims=[3]) — oglindire pe lățime. */
+function flipW(src: Float32Array): Float32Array {
+  const S = IMG_SIZE;
+  const out = new Float32Array(src.length);
+  for (let c = 0; c < 3; c++) {
+    const base = c * S * S;
+    for (let h = 0; h < S; h++)
+      for (let w = 0; w < S; w++) out[base + h * S + w] = src[base + h * S + (S - 1 - w)];
+  }
+  return out;
+}
+
+/** torch.flip(x, dims=[2]) — oglindire pe înălțime. */
+function flipH(src: Float32Array): Float32Array {
+  const S = IMG_SIZE;
+  const out = new Float32Array(src.length);
+  for (let c = 0; c < 3; c++) {
+    const base = c * S * S;
+    for (let h = 0; h < S; h++)
+      for (let w = 0; w < S; w++) out[base + h * S + w] = src[base + (S - 1 - h) * S + w];
+  }
+  return out;
+}
+
+/** torch.rot90(x, 1, dims=[2,3]) — out[i][j] = in[j][S-1-i]. */
+function rot90(src: Float32Array): Float32Array {
+  const S = IMG_SIZE;
+  const out = new Float32Array(src.length);
+  for (let c = 0; c < 3; c++) {
+    const base = c * S * S;
+    for (let i = 0; i < S; i++)
+      for (let j = 0; j < S; j++) out[base + i * S + j] = src[base + j * S + (S - 1 - i)];
+  }
+  return out;
 }
 
 /** Desenează bitmap-ul într-un canvas de w×h și întoarce ImageData (RGBA). */

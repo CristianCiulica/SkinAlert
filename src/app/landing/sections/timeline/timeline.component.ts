@@ -53,8 +53,16 @@ interface TimelineStep {
 
       <div #stack class="container-edit mt-12 max-w-4xl">
         <ol>
-          @for (step of steps; track step.index; let i = $index) {
-            <li class="stack-wrap sticky flex h-[70vh] items-start" [style.--i]="i">
+          @for (step of steps; track step.index; let i = $index; let last = $last) {
+            <!-- Every card needs sticky travel so it rises and covers the one
+                 before it. The last card gets just its own height plus a short
+                 hold (not a full 70vh) — it still stacks on top, but without
+                 leaving a big white gap before the next section. -->
+            <li
+              class="stack-wrap sticky flex items-start"
+              [class]="last ? 'h-[calc(320px+24vh)] md:h-[calc(420px+24vh)]' : 'h-[70vh]'"
+              [style.--i]="i"
+            >
               <div
                 #card
                 class="flex min-h-[320px] w-full flex-col justify-between rounded-[2.5rem] border border-ink/8 bg-surface p-8 sm:p-12 md:min-h-[420px] md:p-16"

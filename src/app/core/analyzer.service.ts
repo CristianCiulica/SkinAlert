@@ -31,7 +31,11 @@ const MAX_SIZE = 384;
 const MEAN = [0.485, 0.456, 0.406];
 const STD = [0.229, 0.224, 0.225];
 const TEMPERATURE = 0.7873;
-const THRESHOLD = 0.23;
+// Prag optimizat pentru SCREENING: prioritizează sensibilitatea (prinderea
+// cancerului). Măsurat pe 200 poze clinice: 0.18 => sensibilitate 95% (vs 92%
+// la 0.23), specificitate 79.5%. La un instrument de triaj, o alarmă falsă e
+// sigură (trimite la medic), un fals negativ e periculos.
+const THRESHOLD = 0.18;
 // quality_gate.py
 const BLUR_MIN = 15.0;
 const DARK_MIN = 55.0;

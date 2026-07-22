@@ -7,6 +7,24 @@
   # Angular CLI 20 cere Node >= 22.22.3
   NODE_VERSION = "22"
 
+# Cache „tare" pentru model + motor AI: se descarcă o dată și rămân în
+# cache un an, fără revalidare la fiecare vizită. (Dacă schimb modelul,
+# redenumesc fișierul ca browserul să ia versiunea nouă.)
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/ort/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/opencv/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # SPA fallback: orice rută servește index.html
 [[redirects]]
   from = "/*"

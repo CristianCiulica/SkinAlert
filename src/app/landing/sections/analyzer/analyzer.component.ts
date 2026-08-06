@@ -88,8 +88,8 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
 
           <!-- Preview + verdict -->
           @if (preview()) {
-            <div class="grid gap-2 overflow-hidden rounded-[2rem] bg-base p-2 sm:grid-cols-2">
-              <div class="relative min-h-[360px] overflow-hidden rounded-[1.6rem] sm:min-h-[460px]">
+            <div class="grid gap-2 overflow-hidden rounded-[2rem] bg-white p-2 sm:grid-cols-2 sm:bg-base">
+              <div class="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] sm:aspect-auto sm:min-h-[460px]">
                 <img
                   [src]="preview()"
                   alt="Fotografia încărcată"
@@ -121,7 +121,7 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
               </div>
 
               <div
-                class="flex flex-col justify-center rounded-[1.6rem] bg-white p-8 sm:p-12"
+                class="flex flex-col justify-center rounded-[1.6rem] p-6 sm:bg-white sm:p-12"
                 aria-live="polite"
                 [attr.aria-busy]="loading()"
               >
@@ -172,11 +172,11 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
                     <div class="mt-10">
                       <div class="flex items-baseline justify-between">
                         <p class="text-sm text-ink/50">Probabilitate de risc</p>
-                        <p class="text-2xl font-semibold tabular-nums tracking-tight text-ink">
+                        <p class="text-3xl font-medium tabular-nums tracking-tight text-ink">
                           <span data-verdict-count>{{ r.probability_malignant * 100 | number: '1.0-1' }}</span>%
                         </p>
                       </div>
-                      <div class="mt-3 h-px w-full bg-ink/10">
+                      <div class="mt-4 h-px w-full bg-ink/10">
                         <div
                           data-verdict-bar
                           class="h-[3px] -translate-y-[1px] origin-left"
@@ -186,7 +186,7 @@ import { RevealDirective } from '../../../shared/directives/reveal.directive';
                       </div>
                     </div>
 
-                    <p class="rule mt-10 pt-6 text-base leading-relaxed text-ink/70">
+                    <p class="mt-8 text-base leading-relaxed text-ink/70">
                       {{ r.recommendation }}
                     </p>
                     <p class="mt-6 text-sm text-ink/40">

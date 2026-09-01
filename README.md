@@ -26,6 +26,7 @@
 
 ## Cum funcționează analiza
 
+
 1. Utilizatorul selectează o fotografie a leziunii.
 2. Aplicația verifică dacă fotografia este suficient de clară și bine iluminată.
 3. Imaginea este preprocesată local: redimensionare, diminuarea firelor de păr și normalizarea culorilor.

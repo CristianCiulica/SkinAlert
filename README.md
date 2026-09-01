@@ -5,7 +5,6 @@
 
 > **Important:** SkinAlert nu oferă un diagnostic medical și nu înlocuiește consultul la dermatolog. Orice leziune nouă, schimbată sau suspectă trebuie evaluată de un medic.
 
-
 ## Ce face aplicația
 
 - Analizează fotografii JPEG, PNG și WebP ale alunițelor sau leziunilor cutanate.

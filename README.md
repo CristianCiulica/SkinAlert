@@ -11,7 +11,7 @@
 - Analizează fotografii JPEG, PNG și WebP ale alunițelor sau leziunilor cutanate.
 - Verifică automat calitatea imaginii înainte de analiză: claritate, luminozitate și contrast.
 - Afișează un rezultat orientativ — „Benign” sau „Suspect” — împreună cu o recomandare de urmărire.
-- Procesează fotografia local, pe dispozitivul utilizatorului: imaginea nu este încărcată pe un server.
+- Procesează fotografia local, pe  dispozitivul utilizatorului: imaginea nu este încărcată pe un server.
 - Încarcă modelele AI doar la prima analiză și le păstrează în cache-ul browserului pentru utilizările ulterioare.
 - Include o interfață responsive, accesibilă și optimizată pentru mișcare redusă.
 

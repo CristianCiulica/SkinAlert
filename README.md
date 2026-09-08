@@ -2,7 +2,6 @@
 
 **SkinAlert** este o aplicație web de screening orientativ pentru leziuni cutanate. Încarci o fotografie, iar aplicația o analizează direct în browser pentru a semnala dacă merită o evaluare dermatologică.
 
-
 > **Important:** SkinAlert nu oferă un diagnostic medical și nu înlocuiește consultul la dermatolog. Orice leziune nouă, schimbată sau suspectă trebuie evaluată de un medic.
 
 ## Ce face aplicația
